@@ -6,6 +6,10 @@ export function formatJMD(cents: number): string {
   }).format(cents / 100)
 }
 
-export function centsToDisplay(cents: number): string {
-  return (cents / 100).toLocaleString('en-JM')
+export function centsToNumber(cents: number): number {
+  return cents / 100
+}
+
+export function numberToCents(value: number): number {
+  return Math.round(value * 100)
 }

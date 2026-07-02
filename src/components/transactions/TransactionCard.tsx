@@ -1,7 +1,7 @@
 import type { Transaction } from '../../types/transaction'
 import { formatJMD } from '../../lib/currency'
 import { formatDateShort } from '../../lib/dates'
-import Badge from '../ui/Badge'
+import { Badge } from '../ui/badge'
 
 interface TransactionCardProps {
   transaction: Transaction
@@ -22,10 +22,9 @@ export default function TransactionCard({ transaction, onClick }: TransactionCar
           {transaction.type === 'income' ? '+' : '-'}
           {formatJMD(transaction.amountCents)}
         </span>
-        <Badge
-          label={transaction.type === 'income' ? 'Income' : 'Expense'}
-          variant={transaction.type === 'income' ? 'green' : 'red'}
-        />
+        <Badge variant={transaction.type === 'income' ? 'default' : 'destructive'}>
+          {transaction.type === 'income' ? 'Income' : 'Expense'}
+        </Badge>
       </div>
     </div>
   )

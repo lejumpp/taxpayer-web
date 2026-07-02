@@ -1,16 +1,16 @@
-export function formatDate(dateStr: string): string {
+export function formatDate(date: string | Date): string {
   return new Intl.DateTimeFormat('en-JM', {
-    year: 'numeric',
-    month: 'short',
     day: 'numeric',
-  }).format(new Date(dateStr))
+    month: 'short',
+    year: 'numeric',
+  }).format(new Date(date))
 }
 
-export function formatDateShort(dateStr: string): string {
+export function formatDateShort(date: string | Date): string {
   return new Intl.DateTimeFormat('en-JM', {
-    month: 'short',
     day: 'numeric',
-  }).format(new Date(dateStr))
+    month: 'short',
+  }).format(new Date(date))
 }
 
 export function currentTaxYear(): number {

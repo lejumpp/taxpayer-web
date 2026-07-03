@@ -28,3 +28,7 @@ export async function register(payload: {
 export async function verifyEmail(token: string): Promise<void> {
   await client.post('/auth/verify-email', { token })
 }
+
+export async function resendVerification(): Promise<void> {
+  await client.post('/auth/resend-verification')
+}

@@ -7,6 +7,7 @@ import AppShell from './components/layout/AppShell'
 import LoginPage from './pages/auth/LoginPage'
 import RegisterPage from './pages/auth/RegisterPage'
 import VerifyEmailPage from './pages/auth/VerifyEmailPage'
+import CallbackPage from './pages/auth/CallbackPage'
 import OnboardingPage from './pages/onboarding/OnboardingPage'
 import DashboardPage from './pages/dashboard/DashboardPage'
 import TransactionsPage from './pages/transactions/TransactionsPage'
@@ -27,6 +28,7 @@ export default function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/auth/callback" element={<CallbackPage />} />
 
             {/* Authenticated */}
             <Route element={<AuthGuard />}>

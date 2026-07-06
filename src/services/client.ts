@@ -5,7 +5,7 @@ const client = axios.create({
   withCredentials: true,          // session cookie on every request
 })
 
-const AUTH_ENDPOINTS = ['/auth/login', '/auth/register']
+const AUTH_ENDPOINTS = ['/api/v1/auth/login', '/api/v1/auth/register']
 
 client.interceptors.response.use(
   response => response,

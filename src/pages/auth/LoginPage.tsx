@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
-import { login, resendVerification } from '@/services/auth'
+import { login, resendVerificationEmail } from '@/services/auth'
 
 const loginSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -37,7 +37,10 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [isUnverified, setUnverified] = useState(false)
+  const [unverifiedEmail, setUnverifiedEmail] = useState('')
   const [lockedUntil, setLockedUntil] = useState<string | null>(null)
+  const [resendTrigger, setResendTrigger] = useState(0)
+  const [cooldown, setCooldown] = useState(0)
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -46,10 +49,23 @@ export default function LoginPage() {
 
   const { formState: { isSubmitting }, setError } = form
 
+  useEffect(() => {
+    if (resendTrigger === 0) return
+    setCooldown(60)
+    const timer = setInterval(() => {
+      setCooldown(n => {
+        if (n <= 1) { clearInterval(timer); return 0 }
+        return n - 1
+      })
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [resendTrigger])
+
   const handleResend = async () => {
     try {
-      await resendVerification()
+      await resendVerificationEmail(unverifiedEmail)
       toast.success('Verification email sent.')
+      setResendTrigger(t => t + 1)
     } catch {
       toast.error('Could not resend. Try again.')
     }
@@ -57,7 +73,9 @@ export default function LoginPage() {
 
   const onSubmit = async (values: LoginForm) => {
     setUnverified(false)
+    setUnverifiedEmail('')
     setLockedUntil(null)
+    setCooldown(0)
     try {
       const user = await login(values.email, values.password)
       setUser(user)
@@ -71,6 +89,7 @@ export default function LoginPage() {
           setError('root', { message: 'Incorrect email or password.' })
         } else if (status === 403 && code === 'EMAIL_UNVERIFIED') {
           setUnverified(true)
+          setUnverifiedEmail(values.email)
         } else if (status === 423) {
           setLockedUntil(error.response?.data?.lockedUntil ?? null)
         } else {
@@ -81,7 +100,7 @@ export default function LoginPage() {
   }
 
   const handleGoogle = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/v1/auth/google`
   }
 
   return (
@@ -221,10 +240,11 @@ export default function LoginPage() {
                     Your email isn&apos;t verified yet. Check your inbox or{' '}
                     <button
                       type="button"
-                      className="underline font-medium hover:text-amber-900"
+                      disabled={cooldown > 0}
+                      className="underline font-medium hover:text-amber-900 disabled:opacity-50 disabled:no-underline"
                       onClick={handleResend}
                     >
-                      resend the link
+                      {cooldown > 0 ? `resend the link (${cooldown}s)` : 'resend the link'}
                     </button>
                     .
                   </div>

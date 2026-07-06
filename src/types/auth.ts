@@ -3,7 +3,7 @@ export interface User {
   email: string
   firstName: string
   lastName: string
-  accountType: 'Individual' | 'Business' | null
+  accountType: 1 | 2 | null
   businessName: string | null
   trnProvided: boolean
   whatsAppVerified: boolean

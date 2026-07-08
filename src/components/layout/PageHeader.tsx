@@ -1,13 +1,21 @@
+import type { ReactNode } from 'react'
+
 interface PageHeaderProps {
   title: string
   subtitle?: string
+  action?: ReactNode
 }
 
-export default function PageHeader({ title, subtitle }: PageHeaderProps) {
+export default function PageHeader({ title, subtitle, action }: PageHeaderProps) {
   return (
-    <header className="px-4 pb-2 pt-6">
-      <h1 className="text-2xl font-bold text-pine">{title}</h1>
-      {subtitle && <p className="mt-1 text-sm text-gray-500">{subtitle}</p>}
-    </header>
+    <div className="flex items-start justify-between mb-6">
+      <div>
+        <h1 className="text-[22px] font-medium text-[#2C2C2A]">{title}</h1>
+        {subtitle && (
+          <p className="text-[13px] text-[#888780] mt-0.5">{subtitle}</p>
+        )}
+      </div>
+      {action && <div>{action}</div>}
+    </div>
   )
 }

@@ -47,6 +47,7 @@ export default function App() {
                   <Route path="/transactions/:id" element={<TransactionDetailPage />} />
                   <Route path="/tax" element={<TaxSummaryPage />} />
                   <Route path="/tax/assessment" element={<TaxAssessmentPage />} />
+                  <Route path="/tax/s04" element={<TaxAssessmentPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                 </Route>
               </Route>

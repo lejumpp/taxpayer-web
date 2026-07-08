@@ -1,28 +1,34 @@
 import { NavLink } from 'react-router-dom'
-
-const links = [
-  { to: '/dashboard', label: 'Home' },
-  { to: '/transactions', label: 'Transactions' },
-  { to: '/tax', label: 'Tax' },
-  { to: '/profile', label: 'Profile' },
-]
+import { navItems } from '../../lib/nav'
 
 export default function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white">
-      <div className="flex justify-around py-2">
-        {links.map(({ to, label }) => (
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E8D9C0] flex md:hidden z-50">
+      {navItems
+        .filter(item => item.bottomNav)
+        .map(item => (
           <NavLink
-            key={to}
-            to={to}
+            key={item.path}
+            to={item.path}
+            end={item.path === '/tax'}
             className={({ isActive }) =>
-              `flex flex-col items-center px-4 py-1 text-xs font-medium ${isActive ? 'text-primary' : 'text-gray-500'}`
+              `flex-1 flex flex-col items-center py-3 gap-1 text-[10px] ${
+                isActive ? 'text-brand-400' : 'text-[#888780]'
+              }`
             }
           >
-            {label}
+            {({ isActive }) => (
+              <>
+                <item.icon
+                  size={20}
+                  className={isActive ? 'text-brand-400' : 'text-[#888780]'}
+                  aria-hidden="true"
+                />
+                {item.label}
+              </>
+            )}
           </NavLink>
         ))}
-      </div>
     </nav>
   )
 }

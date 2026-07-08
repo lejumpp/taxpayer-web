@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import AuthGuard from './guards/AuthGuard'
 import OnboardingGuard from './guards/OnboardingGuard'
 import AppShell from './components/layout/AppShell'
@@ -20,41 +20,57 @@ import ProfilePage from './pages/profile/ProfilePage'
 
 const queryClient = new QueryClient()
 
+function AppRoutes() {
+  const { isInitialising } = useAuth()
+
+  if (isInitialising) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#FAEEDA]">
+        <i className="ti ti-loader-2 animate-spin text-[#C04828] text-2xl" aria-label="Loading" />
+      </div>
+    )
+  }
+
+  return (
+    <Routes>
+      {/* Public */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/auth/callback" element={<CallbackPage />} />
+
+      {/* Authenticated */}
+      <Route element={<AuthGuard />}>
+        <Route path="/onboarding" element={<OnboardingPage />} />
+
+        {/* Onboarding complete */}
+        <Route element={<OnboardingGuard />}>
+          <Route element={<AppShell />}>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/transactions" element={<TransactionsPage />} />
+            <Route path="/transactions/:id" element={<TransactionDetailPage />} />
+            <Route path="/tax" element={<TaxSummaryPage />} />
+            <Route path="/tax/assessment" element={<TaxAssessmentPage />} />
+            <Route path="/tax/s04" element={<TaxAssessmentPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Route>
+        </Route>
+      </Route>
+
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
+  )
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <Routes>
-            {/* Public */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/verify-email" element={<VerifyEmailPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/auth/callback" element={<CallbackPage />} />
-
-            {/* Authenticated */}
-            <Route element={<AuthGuard />}>
-              <Route path="/onboarding" element={<OnboardingPage />} />
-
-              {/* Onboarding complete */}
-              <Route element={<OnboardingGuard />}>
-                <Route element={<AppShell />}>
-                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                  <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/transactions" element={<TransactionsPage />} />
-                  <Route path="/transactions/:id" element={<TransactionDetailPage />} />
-                  <Route path="/tax" element={<TaxSummaryPage />} />
-                  <Route path="/tax/assessment" element={<TaxAssessmentPage />} />
-                  <Route path="/tax/s04" element={<TaxAssessmentPage />} />
-                  <Route path="/profile" element={<ProfilePage />} />
-                </Route>
-              </Route>
-            </Route>
-
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
+          <AppRoutes />
         </BrowserRouter>
       </AuthProvider>
     </QueryClientProvider>

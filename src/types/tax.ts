@@ -15,3 +15,11 @@ export interface TaxAssessment {
   estimatedTaxCents: number
   createdAt: string
 }
+
+export interface TaxSummaryByYear {
+  year?: number
+  breakdown: {
+    totalStatutoryLiabilityCents: number
+    [key: string]: unknown
+  }
+}

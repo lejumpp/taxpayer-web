@@ -50,11 +50,12 @@ interface TransactionModalProps {
   open: boolean
   onClose: () => void
   transaction?: Transaction  // undefined = add mode, set = edit mode
+  defaultType?: 'Income' | 'Expense'
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function TransactionModal({ open, onClose, transaction }: TransactionModalProps) {
+export default function TransactionModal({ open, onClose, transaction, defaultType }: TransactionModalProps) {
   const isEdit = !!transaction
   const queryClient = useQueryClient()
   const { data: categories } = useTransactionCategories()
@@ -67,7 +68,7 @@ export default function TransactionModal({ open, onClose, transaction }: Transac
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      type: 'Income',
+      type: transaction?.type ?? defaultType ?? 'Income',
       description: '',
       category: '',
       transactionDate: today(),
@@ -121,7 +122,7 @@ export default function TransactionModal({ open, onClose, transaction }: Transac
     setAmountError('')
     setHasSaved(false)
     setShowSuccess(false)
-    form.reset({ type: 'Income', description: '', category: '', transactionDate: today() })
+    form.reset({ type: defaultType ?? 'Income', description: '', category: '', transactionDate: today() })
     onClose()
   }
 

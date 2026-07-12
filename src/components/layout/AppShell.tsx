@@ -10,7 +10,7 @@ export default function AppShell() {
   const navigate = useNavigate()
 
   const initials = user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : ''
-  const accountTypeLabel = user?.accountType === 1 ? 'Individual' : 'Business'
+  const accountTypeLabel = user?.accountType === 'Individual' ? 'Individual' : 'Business'
 
   const handleLogout = async () => {
     try {

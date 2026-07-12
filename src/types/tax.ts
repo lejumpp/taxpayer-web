@@ -18,8 +18,15 @@ export interface TaxAssessment {
 
 export interface TaxSummaryByYear {
   year?: number
+  grossIncomeCents: number
+  allowableExpensesCents: number
+  netProfitCents: number
+  taxableIncomeCents: number
   breakdown: {
+    incomeTaxDueCents: number
+    nisDueCents: number
+    nhtDueCents: number
+    educationTaxDueCents: number
     totalStatutoryLiabilityCents: number
-    [key: string]: unknown
   }
 }

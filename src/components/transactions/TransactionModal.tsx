@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useState } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useQueryClient } from '@tanstack/react-query'
@@ -10,8 +10,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useTransactionCategories } from '@/hooks/useTransactionCategories'
 import { createTransaction, updateTransaction } from '@/services/transactions'
+import { todayLocal } from '@/lib/dates'
 import type { Transaction } from '@/types/transaction'
 
 // ─── Schema ──────────────────────────────────────────────────────────────────
@@ -27,8 +35,6 @@ const schema = z.object({
 })
 
 type FormValues = z.infer<typeof schema>
-
-const today = () => new Date().toISOString().split('T')[0]
 
 function centsToDisplay(cents: number): string {
   const [int, dec] = (cents / 100).toFixed(2).split('.')
@@ -64,6 +70,7 @@ export default function TransactionModal({ open, onClose, transaction, defaultTy
   const [amountError, setAmountError] = useState('')
   const [hasSaved, setHasSaved] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [lastTransaction, setLastTransaction] = useState<Transaction | undefined>(undefined)
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -71,20 +78,22 @@ export default function TransactionModal({ open, onClose, transaction, defaultTy
       type: transaction?.type ?? defaultType ?? 'Income',
       description: '',
       category: '',
-      transactionDate: today(),
+      transactionDate: todayLocal(),
     },
   })
 
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     formState: { errors, isSubmitting },
   } = form
 
-  // Populate / reset when target transaction changes
-  useEffect(() => {
+  // Populate / reset when target transaction changes (adjusting state during render,
+  // per https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)
+  if (transaction !== lastTransaction) {
+    setLastTransaction(transaction)
     if (transaction) {
       form.reset({
         type: transaction.type,
@@ -95,10 +104,10 @@ export default function TransactionModal({ open, onClose, transaction, defaultTy
       setAmountDisplay(centsToDisplay(transaction.amountCents))
       setAmountError('')
     }
-  }, [transaction, form])
+  }
 
-  const watchedType = watch('type')
-  const watchedCategory = watch('category')
+  const watchedType = useWatch({ control, name: 'type' })
+  const watchedCategory = useWatch({ control, name: 'category' })
 
   const filteredCategories = categories?.filter(c => c.type === watchedType) ?? []
   const selectedCategory = categories?.find(c => c.id === watchedCategory)
@@ -122,7 +131,7 @@ export default function TransactionModal({ open, onClose, transaction, defaultTy
     setAmountError('')
     setHasSaved(false)
     setShowSuccess(false)
-    form.reset({ type: defaultType ?? 'Income', description: '', category: '', transactionDate: today() })
+    form.reset({ type: defaultType ?? 'Income', description: '', category: '', transactionDate: todayLocal() })
     onClose()
   }
 
@@ -153,7 +162,7 @@ export default function TransactionModal({ open, onClose, transaction, defaultTy
         setHasSaved(true)
         setShowSuccess(true)
         setTimeout(() => setShowSuccess(false), 1500)
-        form.reset({ type: values.type, description: '', category: '', transactionDate: today() })
+        form.reset({ type: values.type, description: '', category: '', transactionDate: todayLocal() })
         setAmountDisplay('')
       }
     } catch {
@@ -257,17 +266,21 @@ export default function TransactionModal({ open, onClose, transaction, defaultTy
                 <label className="block text-[12px] font-medium text-[#5F5E5A] mb-1.5">
                   Category
                 </label>
-                <select
-                  {...register('category')}
-                  className="w-full px-3 py-2.5 border border-[#EDEBE4] rounded-lg text-[13px] text-[#2C2C2A] outline-none focus:border-brand-400 transition-colors bg-white appearance-none cursor-pointer"
+                <Select
+                  value={watchedCategory}
+                  onValueChange={value => setValue('category', value, { shouldValidate: true })}
                 >
-                  <option value="">Select category</option>
-                  {filteredCategories.map(cat => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.displayName}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full rounded-lg border-[#EDEBE4] bg-white text-[13px] text-[#2C2C2A]">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filteredCategories.map(cat => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.displayName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {errors.category && (
                   <p className="text-[12px] text-brand-400 mt-1">{errors.category.message}</p>
                 )}

@@ -2,7 +2,6 @@ import { useState, startTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
-  Search,
   Plus,
   Download,
   Briefcase,
@@ -15,6 +14,8 @@ import {
   TrendingUp,
   Hash,
   Calculator,
+  Calendar as CalendarIcon,
+  X,
 } from 'lucide-react'
 
 import PageHeader from '@/components/layout/PageHeader'
@@ -22,17 +23,27 @@ import TransactionModal from '@/components/transactions/TransactionModal'
 import TransactionCard from '@/components/transactions/TransactionCard'
 import DataTable from '@/components/ui/DataTable'
 import Pagination from '@/components/ui/Pagination'
+import { SearchInput } from '@/components/ui/search-input'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useTransactions, useDeleteTransaction } from '@/hooks/useTransactions'
 import { useTransactionCategories } from '@/hooks/useTransactionCategories'
 import { getTaxSummaryByYear } from '@/services/tax'
 import { formatJMD } from '@/lib/currency'
-import { formatDate } from '@/lib/dates'
+import { formatDate, formatDateShort, toLocalDateString } from '@/lib/dates'
 import type { Column } from '@/components/ui/DataTable'
 import type { TransactionFilters, Transaction } from '@/types/transaction'
 
@@ -94,6 +105,49 @@ function DescriptionCell({ txn }: { txn: Transaction }) {
   )
 }
 
+function DateFilterButton({
+  value,
+  onChange,
+  placeholder,
+  ariaLabel,
+}: {
+  value?: string
+  onChange: (value: string | undefined) => void
+  placeholder: string
+  ariaLabel: string
+}) {
+  const [open, setOpen] = useState(false)
+  const selected = value ? new Date(value + 'T00:00:00') : undefined
+  const currentYear = new Date().getFullYear()
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label={ariaLabel}
+          className="text-[13px] text-gray-900 bg-transparent border-none outline-none cursor-pointer whitespace-nowrap"
+        >
+          {selected ? formatDateShort(selected) : <span className="text-gray-200">{placeholder}</span>}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="single"
+          captionLayout="dropdown"
+          startMonth={new Date(currentYear - 10, 0)}
+          endMonth={new Date(currentYear, 11)}
+          selected={selected}
+          onSelect={date => {
+            onChange(date ? toLocalDateString(date) : undefined)
+            setOpen(false)
+          }}
+        />
+      </PopoverContent>
+    </Popover>
+  )
+}
+
 function EmptyState({
   hasFilters,
   onAdd,
@@ -148,7 +202,15 @@ export default function TransactionsPage() {
   const [editTarget, setEditTarget] = useState<Transaction | null>(null)
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
 
-  const { data, isLoading, isFetching } = useTransactions(filters)
+  const dateRangeInvalid = !!(
+    filters.fromDate &&
+    filters.toDate &&
+    filters.fromDate > filters.toDate
+  )
+
+  const { data, isLoading, isFetching } = useTransactions(
+    dateRangeInvalid ? { ...filters, fromDate: undefined, toDate: undefined } : filters
+  )
   const { data: categories } = useTransactionCategories()
   const { data: taxSummary } = useQuery({
     queryKey: ['tax-summary', currentYear],
@@ -171,7 +233,13 @@ export default function TransactionsPage() {
     setFilters({ pageNumber: 1, pageSize: 10 })
   }
 
-  const hasActiveFilters = !!(filters.type || filters.category || filters.search)
+  const hasActiveFilters = !!(
+    filters.type ||
+    filters.category ||
+    filters.search ||
+    filters.fromDate ||
+    filters.toDate
+  )
 
   function handleDelete() {
     if (!deleteTargetId) return
@@ -321,49 +389,99 @@ export default function TransactionsPage() {
       <div className="bg-white rounded-[14px] border border-cream-border">
         {/* Toolbar */}
         <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-cream-border flex-wrap">
-          <div className="flex items-center gap-2 bg-[#F9F8F5] rounded-lg px-3 py-2 border border-cream-border min-w-0 flex-1 max-w-65">
-            <Search size={14} className="text-gray-200 shrink-0" aria-hidden="true" />
-            <input
-              type="text"
-              placeholder="Search transactions..."
-              className="bg-transparent border-none text-[13px] text-[#2C2C2A] placeholder:text-gray-200 outline-none w-full min-w-0"
-              value={searchInput}
-              onChange={e => setSearchInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && commitSearch()}
+          <SearchInput
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={commitSearch}
+            placeholder="Search transactions..."
+            isLoading={isFetching}
+            className="flex-1 max-w-75"
+          />
+
+          <Select
+            value={filters.type ?? 'all'}
+            onValueChange={value =>
+              updateFilter('type', value === 'all' ? undefined : (value as 'Income' | 'Expense'))
+            }
+          >
+            <SelectTrigger className="rounded-lg border-cream-border bg-white text-[13px] text-[#5F5E5A]">
+              <SelectValue placeholder="All types" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All types</SelectItem>
+              <SelectItem value="Income">Income</SelectItem>
+              <SelectItem value="Expense">Expense</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={filters.category ?? 'all'}
+            onValueChange={value => updateFilter('category', value === 'all' ? undefined : value)}
+          >
+            <SelectTrigger className="rounded-lg border-cream-border bg-white text-[13px] text-[#5F5E5A]">
+              <SelectValue placeholder="All categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All categories</SelectItem>
+              {categories?.map(cat => (
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.displayName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <div className="flex items-center gap-1.5 bg-white border border-cream-border rounded-lg px-3 py-1.5">
+            <CalendarIcon size={13} className="text-gray-200 shrink-0" aria-hidden="true" />
+            <DateFilterButton
+              value={filters.fromDate}
+              onChange={value => updateFilter('fromDate', value)}
+              placeholder="Start date"
+              ariaLabel="Start date"
             />
-            {isFetching && (
-              <div className="w-3 h-3 border-2 border-brand-400 border-t-transparent rounded-full animate-spin shrink-0" />
+            <span className="text-[13px] text-gray-200">→</span>
+            <DateFilterButton
+              value={filters.toDate}
+              onChange={value => updateFilter('toDate', value)}
+              placeholder="End date"
+              ariaLabel="End date"
+            />
+            {(filters.fromDate || filters.toDate) && (
+              <button
+                type="button"
+                onClick={() => {
+                  updateFilter('fromDate', undefined)
+                  updateFilter('toDate', undefined)
+                }}
+                className="text-gray-200 hover:text-[#5F5E5A] bg-transparent border-none ml-1"
+                aria-label="Clear date range"
+              >
+                <X size={13} aria-hidden="true" />
+              </button>
             )}
           </div>
 
-          <select
-            className="px-3 py-2 rounded-lg border border-cream-border bg-white text-[13px] text-[#5F5E5A] outline-none"
-            value={filters.type ?? ''}
-            onChange={e => updateFilter('type', (e.target.value as 'Income' | 'Expense') || undefined)}
-          >
-            <option value="">All types</option>
-            <option value="Income">Income</option>
-            <option value="Expense">Expense</option>
-          </select>
-
-          <select
-            className="px-3 py-2 rounded-lg border border-cream-border bg-white text-[13px] text-[#5F5E5A] outline-none"
-            value={filters.category ?? ''}
-            onChange={e => updateFilter('category', e.target.value || undefined)}
-          >
-            <option value="">All categories</option>
-            {categories?.map(cat => (
-              <option key={cat.id} value={cat.id}>
-                {cat.displayName}
-              </option>
-            ))}
-          </select>
+          {dateRangeInvalid && (
+            <p className="w-full text-[11px] text-brand-400">
+              Start date must be before end date.
+            </p>
+          )}
 
           <div className="flex-1" />
 
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="text-[12px] text-brand-400 bg-transparent border-none whitespace-nowrap"
+            >
+              Clear all
+            </button>
+          )}
+
           <button
             onClick={() => setAddSheetOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-400 text-white text-[13px] font-medium"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-400 text-white text-[13px] font-medium ml-4"
           >
             <Plus size={14} aria-hidden="true" />
             Add transaction

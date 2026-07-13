@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import AccountTypeToggle from '@/components/account/AccountTypeToggle'
 import { useAuth } from '@/context/AuthContext'
 import { patchProfile } from '@/services/profile'
 import { logout } from '@/services/auth'
@@ -86,25 +87,14 @@ export default function OnboardingPage() {
               name="accountType"
               render={() => (
                 <FormItem>
-                  <div className="flex gap-2">
-                    {(['Individual', 'Business'] as const).map(type => (
-                      <button
-                        key={type}
-                        type="button"
-                        onClick={() => {
-                          setValue('accountType', type)
-                          if (type === 'Individual') setValue('businessName', '')
-                        }}
-                        className={
-                          accountType === type
-                            ? 'flex-1 rounded-lg border-2 border-brand-400 bg-brand-50 text-brand-600 py-3 text-sm font-medium transition-colors'
-                            : 'flex-1 rounded-lg border border-cream-border bg-white text-gray-600 py-3 text-sm transition-colors hover:bg-gray-50'
-                        }
-                      >
-                        {type === 'Individual' ? '👤 Individual' : '🏢 Business'}
-                      </button>
-                    ))}
-                  </div>
+                  <AccountTypeToggle
+                    value={accountType}
+                    onChange={type => {
+                      setValue('accountType', type)
+                      if (type === 'Individual') setValue('businessName', '')
+                    }}
+                    labels={{ Individual: '👤 Individual', Business: '🏢 Business' }}
+                  />
                   <FormMessage />
                 </FormItem>
               )}

@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import AccountTypeToggle from '@/components/account/AccountTypeToggle'
 import { register as registerAccount, resendVerificationEmail } from '@/services/auth'
 
 const registerSchema = z
@@ -315,22 +316,7 @@ export default function RegisterPage() {
                         <FormLabel className="text-xs font-medium text-gray-600 uppercase tracking-wide">
                           Account type
                         </FormLabel>
-                        <div className="flex gap-2">
-                          {(['Individual', 'Business'] as const).map(type => (
-                            <button
-                              key={type}
-                              type="button"
-                              onClick={() => form.setValue('accountType', type)}
-                              className={
-                                accountType === type
-                                  ? 'flex-1 rounded-lg border-2 border-brand-400 bg-brand-50 text-brand-600 py-2.5 text-sm font-medium transition-colors'
-                                  : 'flex-1 rounded-lg border border-cream-border bg-white text-gray-600 py-2.5 text-sm transition-colors hover:bg-gray-50'
-                              }
-                            >
-                              {type}
-                            </button>
-                          ))}
-                        </div>
+                        <AccountTypeToggle value={accountType} onChange={type => form.setValue('accountType', type)} />
                         <FormMessage />
                       </FormItem>
                     )}

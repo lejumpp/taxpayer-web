@@ -6,5 +6,6 @@ export interface User {
   accountType: 'Individual' | 'Business' | null
   businessName: string | null
   trnProvided: boolean
+  whatsAppNumber: string | null
   whatsAppVerified: boolean
 }

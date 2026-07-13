@@ -1,9 +1,88 @@
 import PageHeader from '../../components/layout/PageHeader'
+import ProfileSection from './sections/ProfileSection'
+
+const navSections = [
+  {
+    label: 'Account',
+    items: [
+      { label: 'My profile', icon: 'ti-user-circle', path: 'profile', active: true },
+      { label: 'Security', icon: 'ti-lock', path: 'security', active: false },
+    ],
+  },
+  {
+    label: 'Integrations',
+    items: [
+      { label: 'WhatsApp', icon: 'ti-brand-whatsapp', path: 'whatsapp', active: false },
+    ],
+  },
+  {
+    label: 'Billing',
+    items: [
+      { label: 'Plan & billing', icon: 'ti-star', path: 'billing', active: false },
+    ],
+  },
+]
+
+function SecondaryNav() {
+  return (
+    <>
+      {/* Mobile — horizontal scrollable tab row */}
+      <nav className="flex md:hidden gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+        {navSections.flatMap(section => section.items).map(item => (
+          <div
+            key={item.path}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg whitespace-nowrap shrink-0 cursor-pointer ${
+              item.active ? 'bg-brand-50' : 'bg-white border border-cream-border'
+            }`}
+          >
+            <i className={`ti ${item.icon} text-[15px] ${item.active ? 'text-brand-400' : 'text-gray-400'}`} aria-hidden="true" />
+            <span className={`text-[13px] ${item.active ? 'text-brand-400 font-medium' : 'text-gray-600'}`}>
+              {item.label}
+            </span>
+          </div>
+        ))}
+      </nav>
+
+      {/* Desktop — grouped vertical list */}
+      <nav className="hidden md:block w-50 shrink-0 h-fit bg-white rounded-2xl border border-cream-border p-2">
+        {navSections.map(section => (
+          <div key={section.label}>
+            <p className="text-[10px] font-medium text-gray-200 uppercase tracking-[0.07em] px-3 pt-2.5 pb-1.5">
+              {section.label}
+            </p>
+            {section.items.map(item => (
+              <div
+                key={item.path}
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${
+                  item.active ? 'bg-brand-50' : 'hover:bg-gray-25'
+                }`}
+              >
+                <i className={`ti ${item.icon} text-[16px] ${item.active ? 'text-brand-400' : 'text-gray-400'}`} aria-hidden="true" />
+                <span className={`text-[13px] ${item.active ? 'text-brand-400 font-medium' : 'text-gray-600'}`}>
+                  {item.label}
+                </span>
+              </div>
+            ))}
+            <hr className="border-t border-gray-50 my-1.5" />
+          </div>
+        ))}
+      </nav>
+    </>
+  )
+}
 
 export default function ProfilePage() {
   return (
-    <div>
-      <PageHeader title="Profile" />
+    <div className="p-4 md:p-6">
+      <PageHeader title="Settings" subtitle="Manage your account details and preferences." />
+
+      <div className="flex flex-col md:flex-row gap-5">
+        <SecondaryNav />
+
+        <div className="flex-1 min-w-0 bg-white rounded-2xl border border-cream-border overflow-hidden">
+          <ProfileSection />
+        </div>
+      </div>
     </div>
   )
 }

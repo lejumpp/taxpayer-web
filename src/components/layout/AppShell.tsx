@@ -3,13 +3,13 @@ import { LogOut, Search, Bell } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { logout } from '../../services/auth'
 import { navItems } from '../../lib/nav'
+import UserAvatar from '../ui/UserAvatar'
 import BottomNav from './BottomNav'
 
 export default function AppShell() {
   const { user, setUser } = useAuth()
   const navigate = useNavigate()
 
-  const initials = user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : ''
   const accountTypeLabel = user?.accountType === 'Individual' ? 'Individual' : 'Business'
 
   const handleLogout = async () => {
@@ -98,9 +98,7 @@ export default function AppShell() {
         {/* User card */}
         <div className="p-[10px] border-t border-[#E8D9C0]">
           <div className="flex items-center gap-[10px] px-3 py-2.5 rounded-[10px] bg-[#F9F8F5]">
-            <div className="w-[34px] h-[34px] rounded-full bg-brand-400 flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
-              {initials}
-            </div>
+            <UserAvatar firstName={user?.firstName ?? ''} lastName={user?.lastName ?? ''} className="w-8.5 h-8.5 text-xs" />
             <div className="flex-1 min-w-0">
               <p className="text-[12px] font-medium text-[#2C2C2A] truncate">
                 {user?.firstName} {user?.lastName}
@@ -135,9 +133,7 @@ export default function AppShell() {
               <Bell size={18} className="text-[#5F5E5A]" aria-hidden="true" />
             </button>
 
-            <div className="w-[38px] h-[38px] rounded-full bg-brand-400 flex items-center justify-center text-white text-[12px] font-medium cursor-pointer">
-              {initials}
-            </div>
+            <UserAvatar firstName={user?.firstName ?? ''} lastName={user?.lastName ?? ''} className="w-9.5 h-9.5 text-[12px] cursor-pointer" />
           </div>
         </header>
 

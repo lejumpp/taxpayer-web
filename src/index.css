@@ -31,6 +31,7 @@
   --color-cream-deep:   #F5E6CC;  /* hover / pressed on cream */
 
   /* ── Neutral: Warm Gray ── */
+  --color-gray-25:  #F9F8F5;   /* subtle surface / hover fill */
   --color-gray-50:  #F1EFE8;
   --color-gray-100: #D3D1C7;
   --color-gray-200: #B4B2A9;
@@ -41,6 +42,7 @@
 
   /* ── Info: Blue (WhatsApp source) ── */
   --color-info-50:  #E6F1FB;
+  --color-info-100: #C4DCEF;
   --color-info-400: #378ADD;
   --color-info-600: #185FA5;
   --color-info-800: #0C447C;

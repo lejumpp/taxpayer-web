@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'sonner'
 import { Mail, Lock, Eye, EyeOff, Loader2, CheckCircle2, Circle } from 'lucide-react'
@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import AccountTypeToggle from '@/components/account/AccountTypeToggle'
 import { register as registerAccount, resendVerificationEmail } from '@/services/auth'
+import { oauthErrorMessages } from '@/lib/constants'
 
 const registerSchema = z
   .object({
@@ -41,10 +42,11 @@ type RegisterForm = z.infer<typeof registerSchema>
 
 
 export default function RegisterPage() {
+  const [searchParams] = useSearchParams()
+  const oauthError = searchParams.get('error')
   const [showPassword, setShowPassword] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submittedEmail, setSubmittedEmail] = useState('')
-  const [resendTrigger, setResendTrigger] = useState(0)
   const [cooldown, setCooldown] = useState(0)
   const [isResending, setResending] = useState(false)
 
@@ -60,31 +62,24 @@ export default function RegisterPage() {
     },
   })
 
-  const { formState: { isSubmitting }, setError, watch } = form
-  const password = watch('password')
-  const accountType = watch('accountType')
+  const { formState: { isSubmitting }, setError, control } = form
+  const password = useWatch({ control, name: 'password' })
+  const accountType = useWatch({ control, name: 'accountType' })
 
   useEffect(() => {
-    if (resendTrigger === 0) return
-    setCooldown(60)
+    if (cooldown === 0) return
     const timer = setInterval(() => {
-      setCooldown(n => {
-        if (n <= 1) {
-          clearInterval(timer)
-          return 0
-        }
-        return n - 1
-      })
+      setCooldown(n => (n <= 1 ? 0 : n - 1))
     }, 1000)
     return () => clearInterval(timer)
-  }, [resendTrigger])
+  }, [cooldown])
 
   const onSubmit = async (values: RegisterForm) => {
     try {
       await registerAccount(values)
       setSubmittedEmail(values.email)
       setSubmitted(true)
-      setResendTrigger(1)
+      setCooldown(60)
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status
@@ -103,7 +98,7 @@ export default function RegisterPage() {
     setResending(true)
     try {
       await resendVerificationEmail(submittedEmail)
-      setResendTrigger(t => t + 1)
+      setCooldown(60)
     } catch {
       toast.error('Could not resend. Try again.')
     } finally {
@@ -387,6 +382,12 @@ export default function RegisterPage() {
                 <GoogleIcon />
                 Continue with Google
               </Button>
+
+              {oauthError && (
+                <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                  {oauthErrorMessages[oauthError] ?? 'Something went wrong. Please try again.'}
+                </div>
+              )}
 
               <p className="text-center text-sm text-gray-600">
                 Already have an account?{' '}

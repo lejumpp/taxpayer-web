@@ -13,7 +13,8 @@ client.interceptors.response.use(
     const url: string = error.config?.url ?? ''
     const isAuthEndpoint = AUTH_ENDPOINTS.some(path => url.includes(path))
     const alreadyOnLogin = window.location.pathname.startsWith('/login')
-    if (error.response?.status === 401 && !isAuthEndpoint && !alreadyOnLogin) {
+    const alreadyOnCallback = window.location.pathname.startsWith('/auth/callback')
+    if (error.response?.status === 401 && !isAuthEndpoint && !alreadyOnLogin && !alreadyOnCallback) {
       window.location.href = '/login'
     }
     return Promise.reject(error)

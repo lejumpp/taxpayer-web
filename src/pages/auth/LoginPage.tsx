@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'sonner'
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
 import { login, resendVerificationEmail } from '@/services/auth'
+import { oauthErrorMessages } from '@/lib/constants'
 
 const loginSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -35,6 +36,8 @@ function formatLockTime(iso: string): string {
 export default function LoginPage() {
   const { setUser } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const oauthError = searchParams.get('error')
   const [showPassword, setShowPassword] = useState(false)
   const [isUnverified, setUnverified] = useState(false)
   const [unverifiedEmail, setUnverifiedEmail] = useState('')
@@ -288,6 +291,12 @@ export default function LoginPage() {
               <GoogleIcon />
               Continue with Google
             </Button>
+
+            {oauthError && (
+              <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                {oauthErrorMessages[oauthError] ?? 'Something went wrong. Please try again.'}
+              </div>
+            )}
 
             <p className="text-center text-sm text-gray-600">
               New here?{' '}

@@ -27,7 +27,7 @@ export default function AppShell() {
   return (
     <div className="flex min-h-screen bg-cream">
       {/* Side nav — desktop only */}
-      <aside className="hidden md:flex w-[240px] flex-shrink-0 flex-col bg-white border-r border-[#E8D9C0] fixed left-0 top-0 h-screen">
+      <aside className="hidden lg:flex w-[240px] flex-shrink-0 flex-col bg-white border-r border-[#E8D9C0] fixed left-0 top-0 h-screen">
         {/* Logo — must be exactly 60px to align with header */}
         <div className="h-[60px] flex items-center px-5 border-b border-[#E8D9C0] flex-shrink-0">
           <LogoMark />
@@ -117,9 +117,9 @@ export default function AppShell() {
       </aside>
 
       {/* Main column: header + page content */}
-      <div className="flex flex-col flex-1 md:ml-[240px] min-h-screen">
+      <div className="flex flex-col flex-1 lg:ml-[240px] min-h-screen">
         {/* Top header — desktop only, must be exactly 60px to align with nav logo */}
-        <header className="hidden md:flex h-[60px] items-center px-6 bg-white border-b border-[#E8D9C0] sticky top-0 z-10 gap-4">
+        <header className="hidden lg:flex h-[60px] items-center px-6 bg-white border-b border-[#E8D9C0] sticky top-0 z-10 gap-4">
           <div className="flex items-center gap-2 bg-[#F9F8F5] rounded-[10px] px-[14px] py-2 border border-[#E8D9C0] flex-1 max-w-[340px] cursor-text">
             <Search size={15} className="text-[#B4B2A9]" aria-hidden="true" />
             <span className="text-[13px] text-[#B4B2A9]">Search transactions...</span>
@@ -138,7 +138,7 @@ export default function AppShell() {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 pb-20 md:pb-0">
+        <main className="flex-1 pb-20 lg:pb-0">
           <Outlet />
         </main>
       </div>

@@ -72,7 +72,7 @@ function StatCard({
         </div>
         <span className="text-[12px] text-[#888780]">{label}</span>
       </div>
-      <p className="text-[22px] font-semibold tabular" style={{ color: valueColor }}>
+      <p className="text-[22px] font-semibold tabular break-words" style={{ color: valueColor }}>
         {value ?? '—'}
       </p>
     </div>
@@ -352,7 +352,7 @@ export default function TransactionsPage() {
       />
 
       {/* Stat row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard
           label="Total transactions"
           value={summary ? summary.incomeCount + summary.expenseCount : null}
@@ -395,7 +395,7 @@ export default function TransactionsPage() {
             onSearch={commitSearch}
             placeholder="Search transactions..."
             isLoading={isFetching}
-            className="flex-1 max-w-75"
+            className="w-full sm:w-75 sm:shrink-0"
           />
 
           <Select
@@ -404,7 +404,7 @@ export default function TransactionsPage() {
               updateFilter('type', value === 'all' ? undefined : (value as 'Income' | 'Expense'))
             }
           >
-            <SelectTrigger className="rounded-lg border-cream-border bg-white text-[13px] text-[#5F5E5A]">
+            <SelectTrigger className="flex-1 min-w-32 rounded-lg border-cream-border bg-white text-[13px] text-[#5F5E5A]">
               <SelectValue placeholder="All types" />
             </SelectTrigger>
             <SelectContent>
@@ -418,7 +418,7 @@ export default function TransactionsPage() {
             value={filters.category ?? 'all'}
             onValueChange={value => updateFilter('category', value === 'all' ? undefined : value)}
           >
-            <SelectTrigger className="rounded-lg border-cream-border bg-white text-[13px] text-[#5F5E5A]">
+            <SelectTrigger className="flex-1 min-w-32 rounded-lg border-cream-border bg-white text-[13px] text-[#5F5E5A]">
               <SelectValue placeholder="All categories" />
             </SelectTrigger>
             <SelectContent>
@@ -431,7 +431,7 @@ export default function TransactionsPage() {
             </SelectContent>
           </Select>
 
-          <div className="flex items-center gap-1.5 bg-white border border-cream-border rounded-lg px-3 py-1.5">
+          <div className="flex flex-1 min-w-56 items-center gap-1.5 bg-white border border-cream-border rounded-lg px-3 py-1.5">
             <CalendarIcon size={13} className="text-gray-200 shrink-0" aria-hidden="true" />
             <DateFilterButton
               value={filters.fromDate}
@@ -467,25 +467,25 @@ export default function TransactionsPage() {
             </p>
           )}
 
-          <div className="flex-1" />
+          <div className="flex flex-1 items-center justify-end gap-4 min-w-fit">
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="text-[12px] text-brand-400 bg-transparent border-none whitespace-nowrap"
+              >
+                Clear all
+              </button>
+            )}
 
-          {hasActiveFilters && (
             <button
-              type="button"
-              onClick={clearFilters}
-              className="text-[12px] text-brand-400 bg-transparent border-none whitespace-nowrap"
+              onClick={() => setAddSheetOpen(true)}
+              className="flex flex-1 items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-brand-400 text-white text-[13px] font-medium whitespace-nowrap"
             >
-              Clear all
+              <Plus size={14} aria-hidden="true" />
+              Add transaction
             </button>
-          )}
-
-          <button
-            onClick={() => setAddSheetOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-400 text-white text-[13px] font-medium ml-4"
-          >
-            <Plus size={14} aria-hidden="true" />
-            Add transaction
-          </button>
+          </div>
         </div>
 
         {/* Table — desktop */}

@@ -3,7 +3,7 @@ import { navItems } from '../../lib/nav'
 
 export default function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E8D9C0] flex md:hidden z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E8D9C0] flex lg:hidden z-50">
       {navItems
         .filter(item => item.bottomNav)
         .map(item => (

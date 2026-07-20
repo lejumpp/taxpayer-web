@@ -194,7 +194,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-[19px] font-medium text-white tabular-nums">
+                  <p className="text-[19px] font-medium text-white tabular-nums break-words">
                     {formatJMD(
                       taxSummary?.breakdown.totalStatutoryLiabilityCents ?? 0,
                     )}
@@ -216,7 +216,7 @@ export default function DashboardPage() {
                     />
                   </div>
                 </div>
-                <p className="text-[19px] font-medium text-[#0F6E56] tabular-nums">
+                <p className="text-[19px] font-medium text-[#0F6E56] tabular-nums break-words">
                   {formatJMD(summary?.totalIncomeCents ?? 0)}
                 </p>
               </div>
@@ -232,7 +232,7 @@ export default function DashboardPage() {
                     />
                   </div>
                 </div>
-                <p className="text-[19px] font-medium text-[#2C2C2A] tabular-nums">
+                <p className="text-[19px] font-medium text-[#2C2C2A] tabular-nums break-words">
                   {formatJMD(summary?.totalExpensesCents ?? 0)}
                 </p>
               </div>
@@ -248,7 +248,7 @@ export default function DashboardPage() {
                     />
                   </div>
                 </div>
-                <p className="text-[19px] font-medium text-[#2C2C2A] tabular-nums">
+                <p className="text-[19px] font-medium text-[#2C2C2A] tabular-nums break-words">
                   {formatJMD(summary?.netProfitCents ?? 0)}
                 </p>
               </div>

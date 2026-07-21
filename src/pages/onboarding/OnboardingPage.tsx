@@ -76,7 +76,7 @@ export default function OnboardingPage() {
         </div>
 
         <div className="space-y-1">
-          <h1 className="text-[22px] font-medium text-gray-900">One more thing</h1>
+          <h1 className="text-2xl font-medium text-gray-900">One more thing</h1>
           <p className="text-sm text-gray-600">How do you file your taxes?</p>
         </div>
 

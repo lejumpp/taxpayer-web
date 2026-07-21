@@ -131,15 +131,15 @@ export default function ProfileSection() {
       {/* Header */}
       <div className="flex items-center justify-between px-7 py-5 border-b border-gray-50">
         <div>
-          <p className="text-[16px] font-medium text-gray-900">Profile information</p>
-          <p className="text-[12px] text-gray-400 mt-0.5">Update your personal details and tax information.</p>
+          <p className="text-base font-medium text-gray-900">Profile information</p>
+          <p className="text-xs text-gray-400 mt-0.5">Update your personal details and tax information.</p>
         </div>
         <div className="flex gap-2">
           <button
             type="button"
             onClick={handleDiscard}
             disabled={loading || !isDirty}
-            className="h-8.5 px-3.5 rounded-lg border border-cream-border bg-white text-[13px] text-gray-600 disabled:opacity-60"
+            className="h-8.5 px-3.5 rounded-lg border border-cream-border bg-white text-sm text-gray-600 disabled:opacity-60"
           >
             Discard
           </button>
@@ -147,9 +147,9 @@ export default function ProfileSection() {
             type="submit"
             form="profile-form"
             disabled={loading || isSubmitting || !isDirty}
-            className="h-8.5 px-4 rounded-lg bg-brand-400 hover:bg-brand-600 text-white text-[13px] font-medium border-none flex items-center gap-1.5 disabled:opacity-60 transition-colors"
+            className="h-8.5 px-4 rounded-lg bg-brand-400 hover:bg-brand-600 text-white text-sm font-medium border-none flex items-center gap-1.5 disabled:opacity-60 transition-colors"
           >
-            <i className="ti ti-device-floppy text-[14px]" aria-hidden="true" />
+            <i className="ti ti-device-floppy text-sm" aria-hidden="true" />
             Save changes
           </button>
         </div>
@@ -167,12 +167,12 @@ export default function ProfileSection() {
         </div>
       ) : (
         <div className="flex items-center gap-4 px-7 py-6 border-b border-gray-50">
-          <UserAvatar firstName={profile.firstName} lastName={profile.lastName} className="w-17 h-17 text-[24px]" />
+          <UserAvatar firstName={profile.firstName} lastName={profile.lastName} className="w-17 h-17 text-2xl" />
           <div>
-            <p className="text-[16px] font-medium text-gray-900">{profile.firstName} {profile.lastName}</p>
-            <p className="text-[13px] text-gray-400 mt-0.5">{profile.email}</p>
-            <div className="inline-flex items-center gap-1.5 text-[11px] text-gray-600 bg-gray-50 px-2 py-1 rounded-full mt-1.5">
-              <i className={`ti ${profile.accountType === 'Business' ? 'ti-building-store' : 'ti-user'} text-[12px] text-gray-400`} aria-hidden="true" />
+            <p className="text-base font-medium text-gray-900">{profile.firstName} {profile.lastName}</p>
+            <p className="text-sm text-gray-400 mt-0.5">{profile.email}</p>
+            <div className="inline-flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-full mt-1.5">
+              <i className={`ti ${profile.accountType === 'Business' ? 'ti-building-store' : 'ti-user'} text-xs text-gray-400`} aria-hidden="true" />
               {profile.accountType === 'Business' ? profile.businessName : 'Individual'}
             </div>
           </div>
@@ -227,7 +227,7 @@ export default function ProfileSection() {
                   <div>
                     <label className={`${labelClass} block mb-2`}>Email</label>
                     <div className="relative">
-                      <i className="ti ti-lock absolute left-3 top-1/2 -translate-y-1/2 text-[15px] text-gray-400 pointer-events-none" aria-hidden="true" />
+                      <i className="ti ti-lock absolute left-3 top-1/2 -translate-y-1/2 text-base text-gray-400 pointer-events-none" aria-hidden="true" />
                       <Input
                         value={profile.email}
                         disabled
@@ -300,12 +300,12 @@ export default function ProfileSection() {
 
                 {!profile.trnProvided && (
                   <div className="flex items-center gap-2 px-3.5 py-2.5 bg-brand-50 border border-brand-100 rounded-lg mt-2.5">
-                    <i className="ti ti-alert-circle text-brand-400 text-[15px] shrink-0" aria-hidden="true" />
-                    <span className="text-[12px] text-brand-600 flex-1">Your TRN is missing — add it to pre-fill your S04.</span>
+                    <i className="ti ti-alert-circle text-brand-400 text-base shrink-0" aria-hidden="true" />
+                    <span className="text-xs text-brand-600 flex-1">Your TRN is missing — add it to pre-fill your S04.</span>
                     <button
                       type="button"
                       onClick={focusTrn}
-                      className="text-[12px] text-brand-400 font-medium bg-transparent border-none cursor-pointer whitespace-nowrap"
+                      className="text-xs text-brand-400 font-medium bg-transparent border-none cursor-pointer whitespace-nowrap"
                     >
                       Add now →
                     </button>
@@ -320,15 +320,15 @@ export default function ProfileSection() {
               <FormSection bordered={false}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-[13px] font-medium text-gray-900">Log out of TaxPayer</p>
-                    <p className="text-[12px] text-gray-400 mt-0.5">You'll need to log back in to access your account.</p>
+                    <p className="text-sm font-medium text-gray-900">Log out of TaxPayer</p>
+                    <p className="text-xs text-gray-400 mt-0.5">You'll need to log back in to access your account.</p>
                   </div>
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="h-8.5 px-3.5 rounded-lg border border-brand-100 bg-white text-brand-400 text-[12px] font-medium flex items-center gap-1.5"
+                    className="h-8.5 px-3.5 rounded-lg border border-brand-100 bg-white text-brand-400 text-xs font-medium flex items-center gap-1.5"
                   >
-                    <i className="ti ti-logout text-[14px]" aria-hidden="true" />
+                    <i className="ti ti-logout text-sm" aria-hidden="true" />
                     Log out
                   </button>
                 </div>

@@ -176,7 +176,7 @@ export default function TransactionModal({ open, onClose, transaction, defaultTy
     <Dialog open={open} onOpenChange={isOpen => { if (!isOpen) handleClose() }}>
       <DialogContent className="max-w-120 p-0 gap-0 rounded-2xl overflow-hidden">
         <DialogHeader className="px-6 pt-5 pb-4 border-b border-[#EDEBE4]">
-          <DialogTitle className="text-[17px] font-medium text-[#2C2C2A]">
+          <DialogTitle className="text-lg font-medium text-[#2C2C2A]">
             {isEdit ? 'Edit transaction' : 'Add transaction'}
           </DialogTitle>
         </DialogHeader>
@@ -184,46 +184,50 @@ export default function TransactionModal({ open, onClose, transaction, defaultTy
         {/* Success banner — add mode only */}
         {showSuccess && (
           <div className="flex items-center gap-2 px-4 py-2.5 bg-success-50 border-b border-success-100">
-            <i className="ti ti-circle-check text-[#0F6E56] text-[16px]" aria-hidden="true" />
-            <span className="text-[13px] text-[#0F6E56] font-medium">Transaction saved.</span>
+            <i className="ti ti-circle-check text-[#0F6E56] text-base" aria-hidden="true" />
+            <span className="text-sm text-[#0F6E56] font-medium">Transaction saved.</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           {/* Type toggle */}
-          <div className="flex gap-2 px-6 pt-5 pb-4">
-            <button
-              type="button"
-              onClick={() => handleTypeChange('Income')}
-              className={`flex-1 py-2 rounded-lg border text-[13px] font-medium transition-colors ${
-                watchedType === 'Income'
-                  ? 'bg-success-50 border-success-100 text-success-600'
-                  : 'bg-white border-[#EDEBE4] text-[#5F5E5A]'
-              }`}
-            >
-              Income
-            </button>
-            <button
-              type="button"
-              onClick={() => handleTypeChange('Expense')}
-              className={`flex-1 py-2 rounded-lg border text-[13px] font-medium transition-colors ${
-                watchedType === 'Expense'
-                  ? 'bg-brand-50 border-brand-100 text-[#993C1D]'
-                  : 'bg-white border-[#EDEBE4] text-[#5F5E5A]'
-              }`}
-            >
-              Expense
-            </button>
+          <div className="px-6 pt-5 pb-4">
+            <div className="relative flex bg-gray-50 rounded-full p-1">
+              <div
+                className={`absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-full transition-all duration-200 ease-out ${
+                  watchedType === 'Income' ? 'bg-success-400' : 'left-1/2 bg-brand-400'
+                }`}
+                aria-hidden="true"
+              />
+              <button
+                type="button"
+                onClick={() => handleTypeChange('Income')}
+                className={`relative z-10 flex-1 py-2 rounded-full text-sm font-medium transition-colors ${
+                  watchedType === 'Income' ? 'text-white' : 'text-gray-400'
+                }`}
+              >
+                Income
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTypeChange('Expense')}
+                className={`relative z-10 flex-1 py-2 rounded-full text-sm font-medium transition-colors ${
+                  watchedType === 'Expense' ? 'text-white' : 'text-gray-400'
+                }`}
+              >
+                Expense
+              </button>
+            </div>
           </div>
 
           <div className="px-6 pb-5 space-y-4">
             {/* Amount */}
             <div>
-              <label className="block text-[12px] font-medium text-[#5F5E5A] mb-1.5">
+              <label className="block text-xs font-medium text-[#5F5E5A] mb-1.5">
                 Amount
               </label>
               <div className="flex items-center gap-2 border border-[#EDEBE4] rounded-lg px-3 focus-within:border-brand-400 transition-colors">
-                <span className="text-[14px] text-[#888780] shrink-0">JMD$</span>
+                <span className="text-sm text-[#888780] shrink-0">JMD$</span>
                 <input
                   type="text"
                   inputMode="decimal"
@@ -236,41 +240,41 @@ export default function TransactionModal({ open, onClose, transaction, defaultTy
                     setAmountDisplay(formatted)
                     if (amountError) setAmountError('')
                   }}
-                  className="flex-1 py-2.5 bg-transparent outline-none text-[18px] font-medium text-[#2C2C2A] tabular-nums placeholder:text-[#C8C6BF] placeholder:font-normal placeholder:text-[16px]"
+                  className="flex-1 py-2.5 bg-transparent outline-none text-lg font-medium text-[#2C2C2A] tabular-nums placeholder:text-[#C8C6BF] placeholder:font-normal placeholder:text-base"
                 />
               </div>
               {amountError && (
-                <p className="text-[12px] text-brand-400 mt-1">{amountError}</p>
+                <p className="text-xs text-brand-400 mt-1">{amountError}</p>
               )}
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-[12px] font-medium text-[#5F5E5A] mb-1.5">
+              <label className="block text-xs font-medium text-[#5F5E5A] mb-1.5">
                 Description
               </label>
               <input
                 type="text"
                 placeholder="e.g. Invoice #1042"
                 {...register('description')}
-                className="w-full px-3 py-2.5 border border-[#EDEBE4] rounded-lg text-[13px] text-[#2C2C2A] placeholder:text-[#C8C6BF] outline-none focus:border-brand-400 transition-colors"
+                className="w-full px-3 py-2.5 border border-[#EDEBE4] rounded-lg text-sm text-[#2C2C2A] placeholder:text-[#C8C6BF] outline-none focus:border-brand-400 transition-colors"
               />
               {errors.description && (
-                <p className="text-[12px] text-brand-400 mt-1">{errors.description.message}</p>
+                <p className="text-xs text-brand-400 mt-1">{errors.description.message}</p>
               )}
             </div>
 
             {/* Category + Date row */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[12px] font-medium text-[#5F5E5A] mb-1.5">
+                <label className="block text-xs font-medium text-[#5F5E5A] mb-1.5">
                   Category
                 </label>
                 <Select
                   value={watchedCategory}
                   onValueChange={value => setValue('category', value, { shouldValidate: true })}
                 >
-                  <SelectTrigger className="w-full rounded-lg border-[#EDEBE4] bg-white text-[13px] text-[#2C2C2A]">
+                  <SelectTrigger className="w-full rounded-lg border-[#EDEBE4] bg-white text-sm text-[#2C2C2A]">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -282,34 +286,34 @@ export default function TransactionModal({ open, onClose, transaction, defaultTy
                   </SelectContent>
                 </Select>
                 {errors.category && (
-                  <p className="text-[12px] text-brand-400 mt-1">{errors.category.message}</p>
+                  <p className="text-xs text-brand-400 mt-1">{errors.category.message}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-[12px] font-medium text-[#5F5E5A] mb-1.5">
+                <label className="block text-xs font-medium text-[#5F5E5A] mb-1.5">
                   Date
                 </label>
                 <input
                   type="date"
                   {...register('transactionDate')}
-                  className="w-full px-3 py-2.5 border border-[#EDEBE4] rounded-lg text-[13px] text-[#2C2C2A] outline-none focus:border-brand-400 transition-colors cursor-pointer"
+                  className="w-full px-3 py-2.5 border border-[#EDEBE4] rounded-lg text-sm text-[#2C2C2A] outline-none focus:border-brand-400 transition-colors cursor-pointer"
                 />
                 {errors.transactionDate && (
-                  <p className="text-[12px] text-brand-400 mt-1">{errors.transactionDate.message}</p>
+                  <p className="text-xs text-brand-400 mt-1">{errors.transactionDate.message}</p>
                 )}
               </div>
             </div>
 
             {/* Deductible note */}
             {selectedCategory && (
-              <div className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-[12px] ${
+              <div className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs ${
                 isDeductible
                   ? 'bg-success-50 border-success-100 text-success-600'
-                  : 'bg-[#F9F8F5] border-cream-border text-[#888780]'
+                  : 'bg-gray-25 border-cream-border text-[#888780]'
               }`}>
                 <i
-                  className={`ti ${isDeductible ? 'ti-circle-check' : 'ti-info-circle'} text-[15px]`}
+                  className={`ti ${isDeductible ? 'ti-circle-check' : 'ti-info-circle'} text-base`}
                   aria-hidden="true"
                 />
                 <span>
@@ -323,7 +327,7 @@ export default function TransactionModal({ open, onClose, transaction, defaultTy
 
             {/* Root error */}
             {errors.root && (
-              <p className="text-[13px] text-brand-400">{errors.root.message}</p>
+              <p className="text-sm text-brand-400">{errors.root.message}</p>
             )}
           </div>
 
@@ -332,14 +336,14 @@ export default function TransactionModal({ open, onClose, transaction, defaultTy
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 py-2.5 rounded-lg border border-[#EDEBE4] text-[13px] font-medium text-[#5F5E5A] bg-white hover:bg-[#F9F8F5] transition-colors"
+              className="flex-1 py-2.5 rounded-lg border border-[#EDEBE4] text-sm font-medium text-[#5F5E5A] bg-white hover:bg-gray-25 transition-colors"
             >
               {!isEdit && hasSaved ? 'Done' : 'Cancel'}
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-2 py-2.5 rounded-lg bg-brand-400 text-white text-[13px] font-medium disabled:opacity-60 transition-opacity"
+              className="flex-2 py-2.5 rounded-lg bg-brand-400 text-white text-sm font-medium disabled:opacity-60 transition-opacity"
             >
               {isSubmitting
                 ? 'Saving…'

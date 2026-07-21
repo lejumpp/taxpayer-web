@@ -121,7 +121,7 @@ export default function LoginPage() {
           </span>
 
           <div className="space-y-3">
-            <h1 className="text-[40px] font-bold leading-tight tracking-tight">
+            <h1 className="text-4xl font-bold leading-tight tracking-tight">
               Your taxes,<br />sorted.
             </h1>
             <p className="text-white/70 text-base leading-relaxed">
@@ -162,7 +162,7 @@ export default function LoginPage() {
         <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
           <div className="w-full max-w-100 space-y-7">
             <div className="space-y-1">
-              <h2 className="text-[22px] font-medium text-gray-900">Welcome back</h2>
+              <h2 className="text-2xl font-medium text-gray-900">Welcome back</h2>
               <p className="text-sm text-gray-600">Log in to your TaxPayer account.</p>
             </div>
 

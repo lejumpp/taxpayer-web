@@ -1,4 +1,4 @@
-import { Briefcase, Receipt, FileUp } from 'lucide-react'
+import { ArrowUp, ArrowDown, FileUp } from 'lucide-react'
 import type { Transaction } from '@/types/transaction'
 import { formatJMD } from '@/lib/currency'
 import { formatDate } from '@/lib/dates'
@@ -12,36 +12,31 @@ export default function TransactionCard({ transaction, onClick }: TransactionCar
   const isIncome = transaction.type === 'Income'
   const isCsvImport = transaction.source === 'CsvImport'
 
-  const iconBg = isCsvImport
-    ? 'bg-[#E6F1FB]'
-    : isIncome
-    ? 'bg-[#E1F5EE]'
-    : 'bg-[#FDF2EC]'
-
-  const IconComponent = isCsvImport ? FileUp : isIncome ? Briefcase : Receipt
-  const iconColor = isCsvImport ? 'text-[#185FA5]' : isIncome ? 'text-[#0F6E56]' : 'text-[#993C1D]'
+  const iconBg = isCsvImport ? 'bg-info-50' : isIncome ? 'bg-success-50' : 'bg-brand-50'
+  const iconColor = isCsvImport ? 'text-info-600' : isIncome ? 'text-success-600' : 'text-brand-600'
+  const IconComponent = isCsvImport ? FileUp : isIncome ? ArrowUp : ArrowDown
 
   return (
     <div
-      className="flex items-center gap-3 px-5 py-3.5 hover:bg-[#F9F8F5] cursor-pointer transition-colors"
+      className="flex items-center gap-3 px-5 py-3.5 hover:bg-gray-25 cursor-pointer transition-colors"
       onClick={onClick}
     >
-      <div className={`w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0 ${iconBg}`}>
-        <IconComponent size={17} className={iconColor} aria-hidden="true" />
+      <div className={`w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 ${iconBg}`}>
+        <IconComponent size={16} className={iconColor} aria-hidden="true" />
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-[13px] font-medium text-[#2C2C2A] truncate">{transaction.description}</p>
-        <p className="text-[11px] text-[#888780]">
+        <p className="text-sm font-medium text-gray-900 truncate">{transaction.description}</p>
+        <p className="text-xs text-gray-400">
           {isCsvImport ? 'CSV import' : 'Manual entry'} · {formatDate(transaction.transactionDate)}
         </p>
       </div>
 
-      <div className="flex flex-col items-end gap-1 flex-shrink-0">
-        <span className={`text-[13px] font-semibold tabular ${isIncome ? 'text-[#0F6E56]' : 'text-[#2C2C2A]'}`}>
+      <div className="flex flex-col items-end gap-1 shrink-0">
+        <span className={`text-sm font-semibold tabular ${isIncome ? 'text-success-600' : 'text-gray-900'}`}>
           {isIncome ? '+' : '−'}{formatJMD(transaction.amountCents)}
         </span>
-        <span className="text-[11px] text-[#888780] bg-[#F1EFE8] px-2 py-0.5 rounded-full">
+        <span className="text-xs text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">
           {transaction.categoryDisplayName}
         </span>
       </div>

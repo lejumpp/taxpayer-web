@@ -70,9 +70,9 @@ function StatCard({
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconBg}`}>
           <Icon size={15} className={iconColor} aria-hidden="true" />
         </div>
-        <span className="text-[12px] text-[#888780]">{label}</span>
+        <span className="text-xs text-[#888780]">{label}</span>
       </div>
-      <p className="text-[22px] font-semibold tabular break-words" style={{ color: valueColor }}>
+      <p className="text-2xl font-semibold tabular break-words" style={{ color: valueColor }}>
         {value ?? '—'}
       </p>
     </div>
@@ -92,8 +92,8 @@ function DescriptionCell({ txn }: { txn: Transaction }) {
         <IconComponent size={17} className={iconColor} aria-hidden="true" />
       </div>
       <div>
-        <p className="text-[13px] font-medium text-[#2C2C2A]">{txn.description}</p>
-        <p className="text-[11px] text-[#888780] flex items-center gap-1">
+        <p className="text-sm font-medium text-[#2C2C2A]">{txn.description}</p>
+        <p className="text-xs text-[#888780] flex items-center gap-1">
           {isCsvImport ? (
             <><FileUp size={10} aria-hidden="true" />CSV import</>
           ) : (
@@ -126,7 +126,7 @@ function DateFilterButton({
         <button
           type="button"
           aria-label={ariaLabel}
-          className="text-[13px] text-gray-900 bg-transparent border-none outline-none cursor-pointer whitespace-nowrap"
+          className="text-sm text-gray-900 bg-transparent border-none outline-none cursor-pointer whitespace-nowrap"
         >
           {selected ? formatDateShort(selected) : <span className="text-gray-200">{placeholder}</span>}
         </button>
@@ -163,9 +163,9 @@ function EmptyState({
         <div className="w-12 h-12 rounded-[14px] bg-gray-50 flex items-center justify-center mb-4">
           <FilterX size={22} className="text-[#888780]" aria-hidden="true" />
         </div>
-        <p className="text-[15px] font-medium text-[#2C2C2A] mb-1">No transactions match your filters</p>
-        <p className="text-[13px] text-[#888780] mb-5">Try adjusting your search or filters.</p>
-        <button onClick={onClear} className="text-[13px] text-brand-400 font-medium hover:underline">
+        <p className="text-base font-medium text-[#2C2C2A] mb-1">No transactions match your filters</p>
+        <p className="text-sm text-[#888780] mb-5">Try adjusting your search or filters.</p>
+        <button onClick={onClear} className="text-sm text-brand-400 font-medium hover:underline">
           Clear filters
         </button>
       </div>
@@ -177,11 +177,11 @@ function EmptyState({
       <div className="w-12 h-12 rounded-[14px] bg-gray-50 flex items-center justify-center mb-4">
         <FileX size={22} className="text-[#888780]" aria-hidden="true" />
       </div>
-      <p className="text-[15px] font-medium text-[#2C2C2A] mb-1">No transactions yet</p>
-      <p className="text-[13px] text-[#888780] mb-5">Add your first income or expense to get started.</p>
+      <p className="text-base font-medium text-[#2C2C2A] mb-1">No transactions yet</p>
+      <p className="text-sm text-[#888780] mb-5">Add your first income or expense to get started.</p>
       <button
         onClick={onAdd}
-        className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-400 text-white text-[13px] font-medium"
+        className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-400 text-white text-sm font-medium"
       >
         <Plus size={14} aria-hidden="true" />
         Add transaction
@@ -261,7 +261,7 @@ export default function TransactionsPage() {
       key: 'date',
       header: 'Date',
       render: txn => (
-        <span className="text-[13px] text-[#5F5E5A] whitespace-nowrap">
+        <span className="text-sm text-[#5F5E5A] whitespace-nowrap">
           {formatDate(txn.transactionDate)}
         </span>
       ),
@@ -270,7 +270,7 @@ export default function TransactionsPage() {
       key: 'category',
       header: 'Category',
       render: txn => (
-        <span className="text-[12px] text-[#5F5E5A] bg-gray-50 px-2.5 py-1 rounded-full whitespace-nowrap">
+        <span className="text-xs text-[#5F5E5A] bg-gray-50 px-2.5 py-1 rounded-full whitespace-nowrap">
           {txn.categoryDisplayName}
         </span>
       ),
@@ -280,11 +280,11 @@ export default function TransactionsPage() {
       header: 'Deductible',
       render: txn =>
         txn.isTaxDeductible ? (
-          <span className="text-[12px] text-success-600 bg-success-50 px-2.5 py-1 rounded-full font-medium">
+          <span className="text-xs text-success-600 bg-success-50 px-2.5 py-1 rounded-full font-medium">
             Deductible
           </span>
         ) : (
-          <span className="text-[12px] text-[#888780]">—</span>
+          <span className="text-xs text-[#888780]">—</span>
         ),
     },
     {
@@ -293,7 +293,7 @@ export default function TransactionsPage() {
       headerClassName: 'text-right',
       cellClassName: 'text-right',
       render: txn => (
-        <span className={`text-[13px] font-semibold tabular ${
+        <span className={`text-sm font-semibold tabular ${
           txn.type === 'Income' ? 'text-success-600' : 'text-[#2C2C2A]'
         }`}>
           {txn.type === 'Income' ? '+' : '−'}{formatJMD(txn.amountCents)}
@@ -343,7 +343,7 @@ export default function TransactionsPage() {
           <button
             disabled
             title="Coming soon"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-cream-border bg-white text-[13px] text-[#5F5E5A] opacity-50 cursor-not-allowed"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-cream-border bg-white text-sm text-[#5F5E5A] opacity-50 cursor-not-allowed"
           >
             <Download size={14} aria-hidden="true" />
             Export CSV
@@ -404,7 +404,7 @@ export default function TransactionsPage() {
               updateFilter('type', value === 'all' ? undefined : (value as 'Income' | 'Expense'))
             }
           >
-            <SelectTrigger className="flex-1 min-w-32 rounded-lg border-cream-border bg-white text-[13px] text-[#5F5E5A]">
+            <SelectTrigger className="flex-1 min-w-32 rounded-lg border-cream-border bg-white text-sm text-[#5F5E5A]">
               <SelectValue placeholder="All types" />
             </SelectTrigger>
             <SelectContent>
@@ -418,7 +418,7 @@ export default function TransactionsPage() {
             value={filters.category ?? 'all'}
             onValueChange={value => updateFilter('category', value === 'all' ? undefined : value)}
           >
-            <SelectTrigger className="flex-1 min-w-32 rounded-lg border-cream-border bg-white text-[13px] text-[#5F5E5A]">
+            <SelectTrigger className="flex-1 min-w-32 rounded-lg border-cream-border bg-white text-sm text-[#5F5E5A]">
               <SelectValue placeholder="All categories" />
             </SelectTrigger>
             <SelectContent>
@@ -439,7 +439,7 @@ export default function TransactionsPage() {
               placeholder="Start date"
               ariaLabel="Start date"
             />
-            <span className="text-[13px] text-gray-200">→</span>
+            <span className="text-sm text-gray-200">→</span>
             <DateFilterButton
               value={filters.toDate}
               onChange={value => updateFilter('toDate', value)}
@@ -462,7 +462,7 @@ export default function TransactionsPage() {
           </div>
 
           {dateRangeInvalid && (
-            <p className="w-full text-[11px] text-brand-400">
+            <p className="w-full text-xs text-brand-400">
               Start date must be before end date.
             </p>
           )}
@@ -472,7 +472,7 @@ export default function TransactionsPage() {
               <button
                 type="button"
                 onClick={clearFilters}
-                className="text-[12px] text-brand-400 bg-transparent border-none whitespace-nowrap"
+                className="text-xs text-brand-400 bg-transparent border-none whitespace-nowrap"
               >
                 Clear all
               </button>
@@ -480,7 +480,7 @@ export default function TransactionsPage() {
 
             <button
               onClick={() => setAddSheetOpen(true)}
-              className="flex flex-1 items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-brand-400 text-white text-[13px] font-medium whitespace-nowrap"
+              className="flex flex-1 items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-brand-400 text-white text-sm font-medium whitespace-nowrap"
             >
               <Plus size={14} aria-hidden="true" />
               Add transaction
@@ -584,26 +584,26 @@ export default function TransactionsPage() {
       <Dialog open={!!deleteTargetId} onOpenChange={open => !open && setDeleteTargetId(null)}>
         <DialogContent className="max-w-[400px] p-0 gap-0 rounded-2xl overflow-hidden">
           <DialogHeader className="px-6 pt-5 pb-4 border-b border-[#EDEBE4]">
-            <DialogTitle className="text-[17px] font-medium text-[#2C2C2A]">
+            <DialogTitle className="text-lg font-medium text-[#2C2C2A]">
               Delete transaction?
             </DialogTitle>
           </DialogHeader>
           <div className="px-6 py-5">
-            <p className="text-[13px] text-[#5F5E5A]">
+            <p className="text-sm text-[#5F5E5A]">
               This transaction will be permanently removed. This cannot be undone.
             </p>
           </div>
           <div className="flex gap-2 px-6 py-4 border-t border-[#EDEBE4]">
             <button
               onClick={() => setDeleteTargetId(null)}
-              className="flex-1 py-2.5 rounded-lg border border-[#EDEBE4] text-[13px] font-medium text-[#5F5E5A] bg-white hover:bg-[#F9F8F5] transition-colors"
+              className="flex-1 py-2.5 rounded-lg border border-[#EDEBE4] text-sm font-medium text-[#5F5E5A] bg-white hover:bg-[#F9F8F5] transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleDelete}
               disabled={deleteMutation.isPending}
-              className="flex-1 py-2.5 rounded-lg bg-brand-400 text-white text-[13px] font-medium disabled:opacity-60 transition-opacity"
+              className="flex-1 py-2.5 rounded-lg bg-brand-400 text-white text-sm font-medium disabled:opacity-60 transition-opacity"
             >
               {deleteMutation.isPending ? 'Deleting…' : 'Delete'}
             </button>

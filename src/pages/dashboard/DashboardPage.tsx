@@ -1,61 +1,66 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  Sector,
-  type SectorProps,
-} from "recharts";
+  FileText,
+  TrendingUp,
+  Receipt,
+  Wallet,
+  Plus,
+  Minus,
+  ChevronRight,
+  ArrowRight,
+  Inbox,
+  PieChart as PieChartIcon,
+  BarChart3,
+} from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
-import { useDashboardTransactions, useTaxSummary } from "@/hooks/useDashboard";
-import { formatJMD } from "@/lib/currency";
+import { useDashboardTransactions, useTaxSummary, useCashflowTransactions } from "@/hooks/useDashboard";
+import {
+  formatJMD,
+  formatJMDParts,
+  formatJMDCompact,
+  formatJMDWhole,
+} from "@/lib/currency";
 import TransactionModal from "@/components/transactions/TransactionModal";
 import TransactionCard from "@/components/transactions/TransactionCard";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const PIE_COLORS = ["#F5C9B2", "#C04828", "#1D9E75", "#185FA5", "#888780"];
+const CARD = "bg-white rounded-2xl border border-cream-border shadow-none ring-0 py-0 gap-0";
 
 const TAX_ITEMS = [
-  { label: "Income tax", color: "#C04828", key: "incomeTaxDueCents" },
-  { label: "NIS", color: "#1D9E75", key: "nisDueCents" },
-  { label: "NHT", color: "#185FA5", key: "nhtDueCents" },
-  { label: "Education tax", color: "#F5C9B2", key: "educationTaxDueCents" },
+  {
+    label: "Income tax",
+    key: "incomeTaxDueCents",
+    dot: "bg-brand-400",
+    chartColor: "var(--color-brand-400)",
+  },
+  {
+    label: "NIS",
+    key: "nisDueCents",
+    dot: "bg-success-400",
+    chartColor: "var(--color-success-400)",
+  },
+  {
+    label: "NHT",
+    key: "nhtDueCents",
+    dot: "bg-info-600",
+    chartColor: "var(--color-info-600)",
+  },
+  {
+    label: "Education tax",
+    key: "educationTaxDueCents",
+    dot: "bg-gold-400",
+    chartColor: "var(--color-gold-400)",
+  },
 ] as const;
 
-function renderPieLabel(props: {
-  cx: number;
-  cy: number;
-  midAngle: number;
-  outerRadius: number;
-  index: number;
-  name: string;
-  percentage: number;
-}) {
-  const { cx, cy, midAngle, outerRadius, index, name, percentage } = props;
-  if (percentage < 10) return null;
-  const RADIAN = Math.PI / 180;
-  const r = outerRadius * 0.62;
-  const x = cx + r * Math.cos(-midAngle * RADIAN);
-  const y = cy + r * Math.sin(-midAngle * RADIAN);
-  // #F5C9B2 (index 0) is light — use dark text; all others use white
-  const fill = index === 0 ? "#5F5E5A" : "white";
-  const short = name.length > 9 ? name.slice(0, 8) + "…" : name;
-  return (
-    <g>
-      <text x={x} y={y - 7} textAnchor="middle" fontSize={11} fill={fill} opacity={0.85}>
-        {short}
-      </text>
-      <text x={x} y={y + 8} textAnchor="middle" fontSize={14} fontWeight={700} fill={fill}>
-        {percentage}%
-      </text>
-    </g>
-  );
-}
+const EXPENSE_BAR_COLORS = ["bg-brand-400", "bg-gold-400", "bg-success-400", "bg-info-600", "bg-gray-400"];
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -64,10 +69,26 @@ function getGreeting(): string {
   return "Good evening";
 }
 
+// ─── Money — large figures with de-emphasized decimals ────────────────────────
+
+function Money({ cents, className = "" }: { cents: number; className?: string }) {
+  const { whole, decimal } = formatJMDParts(cents);
+  return (
+    <span className={className}>
+      {whole}
+      <span className="font-normal text-small opacity-45">{decimal}</span>
+    </span>
+  );
+}
+
 // ─── Skeletons ────────────────────────────────────────────────────────────────
 
 function SkeletonHeroCell() {
-  return <div className="rounded-xl min-h-27.5 bg-gray-50 animate-pulse" />;
+  return (
+    <div className="rounded-2xl border border-cream-border bg-white p-3.5 min-h-27.5">
+      <div className="h-full rounded-xl bg-gray-50 animate-pulse" />
+    </div>
+  );
 }
 
 function SkeletonTaxRow() {
@@ -98,6 +119,18 @@ function SkeletonTxnRow() {
   );
 }
 
+function SkeletonBarRow() {
+  return (
+    <div className="animate-pulse">
+      <div className="flex items-center justify-between mb-1.5">
+        <div className="h-3 w-16 bg-gray-50 rounded" />
+        <div className="h-3 w-14 bg-gray-50 rounded" />
+      </div>
+      <div className="h-2 w-full bg-gray-50 rounded-full" />
+    </div>
+  );
+}
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
@@ -108,9 +141,9 @@ export default function DashboardPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"Income" | "Expense">("Income");
 
-  const { data: transactionData, isLoading: txnsLoading } =
-    useDashboardTransactions();
+  const { data: transactionData, isLoading: txnsLoading } = useDashboardTransactions();
   const { data: taxSummary, isLoading: taxLoading } = useTaxSummary(taxYear);
+  const { data: cashflowData, isLoading: cashflowLoading } = useCashflowTransactions();
 
   const summary = transactionData?.summary;
 
@@ -124,264 +157,357 @@ export default function DashboardPage() {
     setModalOpen(true);
   }
 
+  const totalOwedCents = taxSummary?.breakdown.totalStatutoryLiabilityCents ?? 0;
+  const grossIncomeCents = summary?.totalIncomeCents ?? 0;
+  const totalExpensesCents = summary?.totalExpensesCents ?? 0;
+  const netProfitCents = summary?.netProfitCents ?? 0;
+  const marginPct = grossIncomeCents > 0 ? Math.round((netProfitCents / grossIncomeCents) * 100) : 0;
+
+  const taxPieData =
+    totalOwedCents > 0
+      ? TAX_ITEMS.map((item) => ({
+          name: item.label,
+          value: taxSummary?.breakdown[item.key] ?? 0,
+          color: item.chartColor,
+        }))
+      : [{ name: "None", value: 1, color: "var(--color-gray-50)" }];
+
   const expenseData = (() => {
     if (!transactionData?.items) return [];
     const grouped = transactionData.items
       .filter((t) => t.type === "Expense")
-      .reduce<{ category: string; name: string; amountCents: number }[]>(
-        (acc, t) => {
-          const existing = acc.find((e) => e.category === t.category);
-          if (existing) {
-            existing.amountCents += t.amountCents;
-          } else {
-            acc.push({
-              category: t.category,
-              name: t.categoryDisplayName,
-              amountCents: t.amountCents,
-            });
-          }
-          return acc;
-        },
-        [],
-      );
-    const total = grouped.reduce((sum, e) => sum + e.amountCents, 0);
-    if (total === 0) return [];
+      .reduce<{ category: string; name: string; amountCents: number }[]>((acc, t) => {
+        const existing = acc.find((e) => e.category === t.category);
+        if (existing) {
+          existing.amountCents += t.amountCents;
+        } else {
+          acc.push({ category: t.category, name: t.categoryDisplayName, amountCents: t.amountCents });
+        }
+        return acc;
+      }, []);
+    const max = Math.max(...grouped.map((e) => e.amountCents), 0);
+    if (max === 0) return [];
     return grouped
-      .map((e) => ({
-        ...e,
-        percentage: Math.round((e.amountCents / total) * 100),
-      }))
+      .map((e) => ({ ...e, widthPct: Math.round((e.amountCents / max) * 100) }))
       .sort((a, b) => b.amountCents - a.amountCents)
       .slice(0, 5);
   })();
+
+  const monthlyCashflow = Array.from({ length: 6 }).map((_, i) => {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() - (5 - i));
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const label = new Intl.DateTimeFormat("en-JM", { month: "short" }).format(d);
+    const monthTxns = cashflowData?.items.filter((t) => t.transactionDate.startsWith(key)) ?? [];
+    const income = monthTxns.filter((t) => t.type === "Income").reduce((sum, t) => sum + t.amountCents, 0);
+    const expenses = monthTxns.filter((t) => t.type === "Expense").reduce((sum, t) => sum + t.amountCents, 0);
+    return { month: label, income, expenses };
+  });
+  const hasCashflowData = monthlyCashflow.some((m) => m.income > 0 || m.expenses > 0);
 
   return (
     <div className="p-6">
       {/* Greeting */}
       <div className="mb-6">
-        <h1 className="text-[22px] font-medium text-[#2C2C2A]">
-          {getGreeting()}, {user?.firstName} 👋
+        <h1 className="font-display text-3xl leading-tight text-gray-900">
+          {getGreeting()}, {user?.firstName}
         </h1>
-        <p className="text-[13px] text-[#888780] mt-0.5">
+        <p className="text-sm text-gray-400 mt-1">
           Tax year {taxYear} · Here's your financial overview
         </p>
       </div>
 
-      {/* Row 1 — Hero, Tax breakdown, Add transaction */}
+      {/* Row 1 — Stat cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
+        {txnsLoading || taxLoading ? (
+          <>
+            <SkeletonHeroCell />
+            <SkeletonHeroCell />
+            <SkeletonHeroCell />
+            <SkeletonHeroCell />
+          </>
+        ) : (
+          <>
+            {/* Estimated tax owed — terracotta featured */}
+            <Card className={`${CARD} p-3.5 bg-brand-400 border-transparent justify-between min-h-27.5`}>
+              <div className="flex items-start justify-between">
+                <p className="text-xs text-white/70">Estimated tax owed</p>
+                <div className="w-7.5 h-7.5 rounded-lg bg-white/15 flex items-center justify-center">
+                  <FileText size={15} className="text-white" aria-hidden="true" />
+                </div>
+              </div>
+              <div>
+                <Money
+                  cents={totalOwedCents}
+                  className="text-xl font-medium text-white tabular-nums wrap-break-word"
+                />
+                <p className="text-xs text-white/60 mt-1">Due Mar 15, {taxYear + 1}</p>
+              </div>
+            </Card>
+
+            {/* Gross income */}
+            <Card className={`${CARD} p-3.5 justify-between min-h-27.5`}>
+              <div className="flex items-start justify-between">
+                <p className="text-xs text-gray-400">Gross income</p>
+                <div className="w-7.5 h-7.5 rounded-lg bg-success-100 flex items-center justify-center">
+                  <TrendingUp size={15} className="text-success-600" aria-hidden="true" />
+                </div>
+              </div>
+              <div>
+                <Money
+                  cents={grossIncomeCents}
+                  className="text-xl font-medium text-success-600 tabular-nums wrap-break-word"
+                />
+                <p className="text-xs text-success-600 mt-1 flex items-center gap-1">
+                  <span aria-hidden="true">▲</span> Full year
+                </p>
+              </div>
+            </Card>
+
+            {/* Total expenses */}
+            <Card className={`${CARD} p-3.5 justify-between min-h-27.5`}>
+              <div className="flex items-start justify-between">
+                <p className="text-xs text-gray-400">Total expenses</p>
+                <div className="w-7.5 h-7.5 rounded-lg bg-gray-50 flex items-center justify-center">
+                  <Receipt size={15} className="text-gray-400" aria-hidden="true" />
+                </div>
+              </div>
+              <div>
+                <Money
+                  cents={totalExpensesCents}
+                  className="text-xl font-medium text-gray-900 tabular-nums wrap-break-word"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  {totalExpensesCents === 0
+                    ? "No expenses logged"
+                    : `${summary?.expenseCount ?? 0} transaction${summary?.expenseCount === 1 ? "" : "s"} logged`}
+                </p>
+              </div>
+            </Card>
+
+            {/* Net profit */}
+            <Card className={`${CARD} p-3.5 justify-between min-h-27.5`}>
+              <div className="flex items-start justify-between">
+                <p className="text-xs text-gray-400">Net profit</p>
+                <div className="w-7.5 h-7.5 rounded-lg bg-gray-50 flex items-center justify-center">
+                  <Wallet size={15} className="text-gray-400" aria-hidden="true" />
+                </div>
+              </div>
+              <div>
+                <Money
+                  cents={netProfitCents}
+                  className="text-xl font-medium text-gray-900 tabular-nums wrap-break-word"
+                />
+                <p className="text-xs text-gray-400 mt-1">{marginPct}% margin</p>
+              </div>
+            </Card>
+          </>
+        )}
+      </div>
+
+      {/* Row 2 — Tax breakdown, Add transaction */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-        {/* Widget 1 — Hero card */}
-        <div className="grid grid-cols-2 grid-rows-2 gap-2.5 p-5 bg-white rounded-2xl border border-cream-border">
-          {txnsLoading || taxLoading ? (
-            <>
-              <SkeletonHeroCell />
-              <SkeletonHeroCell />
-              <SkeletonHeroCell />
-              <SkeletonHeroCell />
-            </>
-          ) : (
-            <>
-              {/* Top-left — terracotta featured */}
-              <div className="rounded-xl p-3.5 bg-brand-400 flex flex-col justify-between min-h-27.5">
-                <div className="flex items-start justify-between">
-                  <p className="text-[12px] text-white/70">
-                    Estimated tax owed
-                  </p>
-                  <div className="w-7.5 h-7.5 rounded-lg bg-white/15 flex items-center justify-center">
-                    <i
-                      className="ti ti-file-invoice text-white text-[15px]"
-                      aria-hidden="true"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <p className="text-[19px] font-medium text-white tabular-nums break-words">
-                    {formatJMD(
-                      taxSummary?.breakdown.totalStatutoryLiabilityCents ?? 0,
-                    )}
-                  </p>
-                  <p className="text-[11px] text-white/60 mt-1">
-                    Due Mar 15, {taxYear + 1}
-                  </p>
-                </div>
-              </div>
-
-              {/* Top-right — Gross income */}
-              <div className="rounded-xl p-3.5 bg-[#F0FAF6] flex flex-col justify-between min-h-27.5">
-                <div className="flex items-start justify-between">
-                  <p className="text-[12px] text-[#888780]">Gross income</p>
-                  <div className="w-7.5 h-7.5 rounded-lg bg-[#D1F2E6] flex items-center justify-center">
-                    <i
-                      className="ti ti-trending-up text-[#0F6E56] text-[15px]"
-                      aria-hidden="true"
-                    />
-                  </div>
-                </div>
-                <p className="text-[19px] font-medium text-[#0F6E56] tabular-nums break-words">
-                  {formatJMD(summary?.totalIncomeCents ?? 0)}
-                </p>
-              </div>
-
-              {/* Bottom-left — Total expenses */}
-              <div className="rounded-xl p-3.5 bg-[#F9F8F5] flex flex-col justify-between min-h-27.5">
-                <div className="flex items-start justify-between">
-                  <p className="text-[12px] text-[#888780]">Total expenses</p>
-                  <div className="w-7.5 h-7.5 rounded-lg bg-[#EDEBE4] flex items-center justify-center">
-                    <i
-                      className="ti ti-receipt text-[#888780] text-[15px]"
-                      aria-hidden="true"
-                    />
-                  </div>
-                </div>
-                <p className="text-[19px] font-medium text-[#2C2C2A] tabular-nums break-words">
-                  {formatJMD(summary?.totalExpensesCents ?? 0)}
-                </p>
-              </div>
-
-              {/* Bottom-right — Net profit */}
-              <div className="rounded-xl p-3.5 bg-[#F9F8F5] flex flex-col justify-between min-h-27.5">
-                <div className="flex items-start justify-between">
-                  <p className="text-[12px] text-[#888780]">Net profit</p>
-                  <div className="w-7.5 h-7.5 rounded-lg bg-[#EDEBE4] flex items-center justify-center">
-                    <i
-                      className="ti ti-wallet text-[#888780] text-[15px]"
-                      aria-hidden="true"
-                    />
-                  </div>
-                </div>
-                <p className="text-[19px] font-medium text-[#2C2C2A] tabular-nums break-words">
-                  {formatJMD(summary?.netProfitCents ?? 0)}
-                </p>
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Widget 2 — Tax breakdown */}
-        <div className="bg-white rounded-2xl border border-cream-border p-5 flex flex-col">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-[13px] font-medium text-[#2C2C2A]">
-              Tax breakdown
-            </p>
-            <span className="text-[12px] text-[#888780]">{taxYear}</span>
-          </div>
-
-          {taxLoading ? (
-            <div className="flex flex-col gap-2.5 flex-1">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <SkeletonTaxRow key={i} />
-              ))}
+        {/* Widget 2 — Tax breakdown / Cashflow */}
+        <Card className={`${CARD} md:col-span-2 p-5`}>
+          <Tabs defaultValue="tax" className="flex-1 flex flex-col gap-0">
+            <div className="flex items-center justify-between mb-4">
+              <TabsList variant="line" className="p-0 h-auto gap-4 bg-transparent justify-start">
+                <TabsTrigger
+                  value="tax"
+                  className="px-0 py-0 h-auto text-sm font-medium text-gray-400 data-active:bg-transparent data-active:text-gray-900 data-active:after:bg-brand-400"
+                >
+                  Tax breakdown
+                </TabsTrigger>
+                <TabsTrigger
+                  value="cashflow"
+                  className="px-0 py-0 h-auto text-sm font-medium text-gray-400 data-active:bg-transparent data-active:text-gray-900 data-active:after:bg-brand-400"
+                >
+                  Cashflow
+                </TabsTrigger>
+              </TabsList>
+              <span className="text-xs text-gray-400">{taxYear}</span>
             </div>
-          ) : (
-            <>
-              <div className="flex flex-col gap-2.5 flex-1">
-                {TAX_ITEMS.map((item) => (
-                  <div
-                    key={item.label}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2 text-[13px] text-[#5F5E5A]">
-                      <div
-                        className="w-2 h-2 rounded-xs"
-                        style={{ background: item.color }}
-                      />
-                      {item.label}
+
+            <TabsContent value="tax" className="flex-1 flex flex-col gap-0 min-h-45">
+              {taxLoading ? (
+                <div className="flex flex-col gap-2.5 flex-1">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <SkeletonTaxRow key={i} />
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="relative w-40 h-40 shrink-0">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={taxPieData}
+                            dataKey="value"
+                            innerRadius={55}
+                            outerRadius={78}
+                            startAngle={90}
+                            endAngle={-270}
+                            paddingAngle={totalOwedCents > 0 ? 3 : 0}
+                            stroke="none"
+                          >
+                            {taxPieData.map((d, i) => (
+                              <Cell key={i} fill={d.color} />
+                            ))}
+                          </Pie>
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-2">
+                        <span className="text-xs text-gray-400">Total owed</span>
+                        <span className="text-base font-semibold text-gray-900 tabular-nums">
+                          {formatJMDCompact(totalOwedCents)}
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-[13px] font-medium text-[#2C2C2A] tabular-nums">
-                      {formatJMD(taxSummary?.breakdown[item.key] ?? 0)}
+
+                    <div className="flex-1 flex flex-col gap-2.5 min-w-0">
+                      {TAX_ITEMS.map((item) => (
+                        <div key={item.label} className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 text-sm text-gray-600 min-w-0">
+                            <span className={`w-2 h-2 rounded-xs shrink-0 ${item.dot}`} />
+                            <span className="truncate">{item.label}</span>
+                          </div>
+                          <span className="text-sm font-medium text-gray-900 tabular-nums shrink-0">
+                            {formatJMD(taxSummary?.breakdown[item.key] ?? 0)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <hr className="border-t border-gray-50 my-3" />
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-900">Total owed</span>
+                    <Money
+                      cents={totalOwedCents}
+                      className="text-base font-medium text-brand-600 tabular-nums"
+                    />
+                  </div>
+                </>
+              )}
+            </TabsContent>
+
+            <TabsContent value="cashflow" className="flex-1 flex flex-col min-h-45">
+              {cashflowLoading ? (
+                <div className="flex-1 flex items-end gap-3">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 h-24 bg-gray-50 rounded-t-md animate-pulse"
+                      style={{ opacity: 0.5 + (i % 3) * 0.15 }}
+                    />
+                  ))}
+                </div>
+              ) : !hasCashflowData ? (
+                <div className="flex-1 flex flex-col items-center justify-center text-center">
+                  <BarChart3 size={32} className="text-gray-100 mb-3" aria-hidden="true" />
+                  <p className="text-sm text-gray-400">Not enough data yet.</p>
+                  <p className="text-xs text-gray-200 mt-1">
+                    Add income and expenses to see monthly cashflow.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <ResponsiveContainer width="100%" height={180}>
+                    <BarChart data={monthlyCashflow} barGap={4} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
+                      <XAxis
+                        dataKey="month"
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: "var(--color-gray-400)", fontSize: 12 }}
+                        dy={6}
+                      />
+                      <Tooltip
+                        cursor={{ fill: "var(--color-gray-25)" }}
+                        formatter={(value, name) => [
+                          formatJMD(Number(value)),
+                          name === "income" ? "Income" : "Expenses",
+                        ]}
+                        contentStyle={{
+                          fontSize: 12,
+                          borderRadius: 8,
+                          border: "1px solid var(--color-cream-border)",
+                        }}
+                      />
+                      <Bar dataKey="income" fill="var(--color-chart-income)" radius={[6, 6, 0, 0]} barSize={28} />
+                      <Bar
+                        dataKey="expenses"
+                        fill="var(--color-chart-expense)"
+                        radius={[6, 6, 0, 0]}
+                        barSize={20}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <div className="flex items-center gap-4 mt-1">
+                    <span className="flex items-center gap-1.5 text-xs text-gray-600">
+                      <span className="w-2.5 h-2.5 rounded-xs bg-chart-income" />
+                      Income
+                    </span>
+                    <span className="flex items-center gap-1.5 text-xs text-gray-600">
+                      <span className="w-2.5 h-2.5 rounded-xs bg-chart-expense" />
+                      Expenses
                     </span>
                   </div>
-                ))}
-              </div>
-              <hr className="border-t border-gray-50 my-2.5" />
-              <div className="flex items-center justify-between">
-                <span className="text-[13px] font-medium text-[#2C2C2A]">
-                  Total owed
-                </span>
-                <span className="text-[16px] font-medium text-[#993C1D] tabular-nums">
-                  {formatJMD(
-                    taxSummary?.breakdown.totalStatutoryLiabilityCents ?? 0,
-                  )}
-                </span>
-              </div>
-            </>
-          )}
-        </div>
+                </>
+              )}
+            </TabsContent>
+          </Tabs>
+        </Card>
 
         {/* Widget 3 — Add transaction */}
-        <div className="bg-white rounded-2xl border border-cream-border p-5">
-          <p className="text-[13px] font-medium text-[#2C2C2A] mb-1">
-            Add transaction
-          </p>
-          <p className="text-[12px] text-[#888780] mb-4">
-            Record a new income or expense
-          </p>
+        <Card className={`${CARD} p-5`}>
+          <p className="text-sm font-medium text-gray-900 mb-1">Add transaction</p>
+          <p className="text-xs text-gray-400 mb-4">Record a new income or expense</p>
 
           <div className="flex flex-col gap-2.5">
             <button
               onClick={handleAddIncome}
-              className="flex items-center gap-2.5 p-3 rounded-xl border border-success-100 bg-success-50 hover:bg-[#D0F0E4] transition-colors w-full"
+              className="flex items-center gap-2.5 p-3 rounded-xl border border-success-100 bg-success-50 hover:bg-success-100 transition-colors w-full"
             >
               <div className="w-8.5 h-8.5 rounded-lg bg-success-400 flex items-center justify-center shrink-0">
-                <i
-                  className="ti ti-trending-up text-white text-[16px]"
-                  aria-hidden="true"
-                />
+                <Plus size={16} className="text-white" aria-hidden="true" />
               </div>
               <div className="text-left">
-                <p className="text-[13px] font-medium text-[#0F6E56]">
-                  Add income
-                </p>
-                <p className="text-[11px] text-success-400">
-                  Sales, fees, revenue
-                </p>
+                <p className="text-sm font-medium text-success-600">Add income</p>
+                <p className="text-xs text-success-400">Sales, fees, revenue</p>
               </div>
-              <i
-                className="ti ti-chevron-right text-gray-200 text-[15px] ml-auto"
-                aria-hidden="true"
-              />
+              <ChevronRight size={15} className="text-gray-200 ml-auto" aria-hidden="true" />
             </button>
 
             <button
               onClick={handleAddExpense}
-              className="flex items-center gap-2.5 p-3 rounded-xl border border-brand-100 bg-brand-50 hover:bg-[#FAE4D4] transition-colors w-full"
+              className="flex items-center gap-2.5 p-3 rounded-xl border border-brand-100 bg-brand-50 hover:bg-brand-100 transition-colors w-full"
             >
               <div className="w-8.5 h-8.5 rounded-lg bg-brand-400 flex items-center justify-center shrink-0">
-                <i
-                  className="ti ti-trending-down text-white text-[16px]"
-                  aria-hidden="true"
-                />
+                <Minus size={16} className="text-white" aria-hidden="true" />
               </div>
               <div className="text-left">
-                <p className="text-[13px] font-medium text-[#993C1D]">
-                  Add expense
-                </p>
-                <p className="text-[11px] text-brand-400">
-                  Rent, utilities, vehicle
-                </p>
+                <p className="text-sm font-medium text-brand-600">Add expense</p>
+                <p className="text-xs text-brand-400">Rent, utilities, vehicle</p>
               </div>
-              <i
-                className="ti ti-chevron-right text-gray-200 text-[15px] ml-auto"
-                aria-hidden="true"
-              />
+              <ChevronRight size={15} className="text-gray-200 ml-auto" aria-hidden="true" />
             </button>
           </div>
-        </div>
+        </Card>
       </div>
 
-      {/* Row 2 — Recent transactions, Expense pie */}
+      {/* Row 3 — Recent transactions, Expense breakdown */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Widget 4 — Recent transactions */}
-        <div className="md:col-span-2 bg-white rounded-2xl border border-cream-border overflow-hidden">
+        <Card className={`${CARD} md:col-span-2 overflow-hidden`}>
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
-            <p className="text-[13px] font-medium text-[#2C2C2A]">
-              Recent transactions
-            </p>
+            <p className="text-sm font-medium text-gray-900">Recent transactions</p>
             <Link
               to="/transactions"
-              className="flex items-center gap-1 text-[12px] text-brand-400 hover:underline"
+              className="flex items-center gap-1 text-xs text-brand-600 hover:underline"
             >
               View all
-              <i className="ti ti-arrow-right text-[13px]" aria-hidden="true" />
+              <ArrowRight size={13} aria-hidden="true" />
             </Link>
           </div>
 
@@ -393,14 +519,9 @@ export default function DashboardPage() {
             </div>
           ) : !transactionData?.items.length ? (
             <div className="flex flex-col items-center justify-center py-10 px-6 text-center">
-              <i
-                className="ti ti-receipt-off text-[32px] text-[#D3D1C7] mb-3"
-                aria-hidden="true"
-              />
-              <p className="text-[13px] text-[#888780]">No transactions yet.</p>
-              <p className="text-[12px] text-gray-200 mt-1">
-                Add income or expenses to see them here.
-              </p>
+              <Inbox size={32} className="text-gray-100 mb-3" aria-hidden="true" />
+              <p className="text-sm text-gray-400">No transactions yet.</p>
+              <p className="text-xs text-gray-200 mt-1">Add income or expenses to see them here.</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-50">
@@ -413,77 +534,47 @@ export default function DashboardPage() {
               ))}
             </div>
           )}
-        </div>
+        </Card>
 
-        {/* Widget 5 — Expense breakdown pie */}
-        <div className="bg-white rounded-2xl border border-cream-border p-5">
-          <p className="text-[13px] font-medium text-[#2C2C2A] mb-4">
-            Expense breakdown
-          </p>
+        {/* Widget 5 — Expense breakdown */}
+        <Card className={`${CARD} p-5`}>
+          <p className="text-sm font-medium text-gray-900 mb-4">Expense breakdown</p>
 
           {txnsLoading ? (
-            <div className="flex items-center justify-center py-4">
-              <div className="w-35 h-35 rounded-full bg-gray-50 animate-pulse" />
+            <div className="flex flex-col gap-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <SkeletonBarRow key={i} />
+              ))}
             </div>
-          ) : expenseData.length < 2 ? (
+          ) : expenseData.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-50 text-center">
-              <i
-                className="ti ti-chart-pie text-[32px] text-[#D3D1C7] mb-3"
-                aria-hidden="true"
-              />
-              <p className="text-[13px] text-[#888780]">Not enough data yet.</p>
-              <p className="text-[12px] text-gray-200 mt-1">
-                Add more expenses to see your breakdown.
-              </p>
+              <PieChartIcon size={32} className="text-gray-100 mb-3" aria-hidden="true" />
+              <p className="text-sm text-gray-400">Not enough data yet.</p>
+              <p className="text-xs text-gray-200 mt-1">Add more expenses to see your breakdown.</p>
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
-                <Pie
-                  data={expenseData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={95}
-                  dataKey="amountCents"
-                  paddingAngle={4}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  label={renderPieLabel as any}
-                  labelLine={false}
-                  activeShape={(props: SectorProps) => (
-                    <Sector
-                      {...props}
-                      outerRadius={(props.outerRadius ?? 95) + 10}
-                    />
-                  )}
-                >
-                  {expenseData.map((_, index) => (
-                    <Cell
-                      key={index}
-                      fill={PIE_COLORS[index % PIE_COLORS.length]}
-                      stroke="white"
-                      strokeWidth={2}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value) => [formatJMD(Number(value)), "Amount"]}
-                  contentStyle={{
-                    fontSize: 12,
-                    borderRadius: 8,
-                    border: "1px solid #E8D9C0",
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="flex flex-col gap-4">
+              {expenseData.map((item, i) => (
+                <div key={item.category}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-sm text-gray-600">{item.name}</span>
+                    <span className="text-sm font-medium text-gray-900 tabular-nums">
+                      {formatJMDWhole(item.amountCents)}
+                    </span>
+                  </div>
+                  <Progress
+                    value={item.widthPct}
+                    className="h-2 bg-gray-50"
+                    indicatorClassName={EXPENSE_BAR_COLORS[i % EXPENSE_BAR_COLORS.length]}
+                  />
+                </div>
+              ))}
+            </div>
           )}
-        </div>
+        </Card>
       </div>
 
-      <TransactionModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        defaultType={modalType}
-      />
+      <TransactionModal open={modalOpen} onClose={() => setModalOpen(false)} defaultType={modalType} />
     </div>
   );
 }

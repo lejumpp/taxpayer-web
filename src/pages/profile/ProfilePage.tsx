@@ -35,8 +35,8 @@ function SecondaryNav() {
               item.active ? 'bg-brand-50' : 'bg-white border border-cream-border'
             }`}
           >
-            <i className={`ti ${item.icon} text-[15px] ${item.active ? 'text-brand-400' : 'text-gray-400'}`} aria-hidden="true" />
-            <span className={`text-[13px] ${item.active ? 'text-brand-400 font-medium' : 'text-gray-600'}`}>
+            <i className={`ti ${item.icon} text-base ${item.active ? 'text-brand-400' : 'text-gray-400'}`} aria-hidden="true" />
+            <span className={`text-sm ${item.active ? 'text-brand-400 font-medium' : 'text-gray-600'}`}>
               {item.label}
             </span>
           </div>
@@ -47,7 +47,7 @@ function SecondaryNav() {
       <nav className="hidden md:block w-50 shrink-0 h-fit bg-white rounded-2xl border border-cream-border p-2">
         {navSections.map(section => (
           <div key={section.label}>
-            <p className="text-[10px] font-medium text-gray-200 uppercase tracking-[0.07em] px-3 pt-2.5 pb-1.5">
+            <p className="text-xs font-medium text-gray-200 uppercase tracking-[0.07em] px-3 pt-2.5 pb-1.5">
               {section.label}
             </p>
             {section.items.map(item => (
@@ -57,8 +57,8 @@ function SecondaryNav() {
                   item.active ? 'bg-brand-50' : 'hover:bg-gray-25'
                 }`}
               >
-                <i className={`ti ${item.icon} text-[16px] ${item.active ? 'text-brand-400' : 'text-gray-400'}`} aria-hidden="true" />
-                <span className={`text-[13px] ${item.active ? 'text-brand-400 font-medium' : 'text-gray-600'}`}>
+                <i className={`ti ${item.icon} text-base ${item.active ? 'text-brand-400' : 'text-gray-400'}`} aria-hidden="true" />
+                <span className={`text-sm ${item.active ? 'text-brand-400 font-medium' : 'text-gray-600'}`}>
                   {item.label}
                 </span>
               </div>

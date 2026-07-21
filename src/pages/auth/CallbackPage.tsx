@@ -28,7 +28,7 @@ export default function CallbackPage() {
       <div className="flex min-h-screen items-center justify-center bg-cream">
         <div className="w-full max-w-105 mx-auto bg-white rounded-2xl border border-cream-border p-8 text-center">
           <XCircle className="size-8 text-brand-400 mx-auto mb-4" aria-hidden="true" />
-          <p className="text-[17px] font-medium text-gray-900 mb-2">Sign in failed</p>
+          <p className="text-lg font-medium text-gray-900 mb-2">Sign in failed</p>
           <p className="text-sm text-gray-600 mb-6">
             Something went wrong with Google sign in. Please try again.
           </p>

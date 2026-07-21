@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/fraunces";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -26,9 +27,9 @@
   --color-success-900: #04342C;
 
   /* ── Surface: Cream ── */
-  --color-cream:        #FAEEDA;  /* page background */
-  --color-cream-border: #E8D9C0;  /* subtle border on cream */
-  --color-cream-deep:   #F5E6CC;  /* hover / pressed on cream */
+  --color-cream:        #FAF7F2;  /* page background — light warm white */
+  --color-cream-border: #EDE9E1;  /* subtle border on cream */
+  --color-cream-deep:   #F0EBE3;  /* hover / pressed on cream */
 
   /* ── Neutral: Warm Gray ── */
   --color-gray-25:  #F9F8F5;   /* subtle surface / hover fill */
@@ -47,6 +48,16 @@
   --color-info-600: #185FA5;
   --color-info-800: #0C447C;
 
+  /* ── Gold: category accent (education tax, utilities) ── */
+  --color-gold-50:  #FBF3E1;
+  --color-gold-100: #EFD79B;
+  --color-gold-400: #C99A2E;
+  --color-gold-600: #8F6E1F;
+
+  /* ── Cashflow chart: income vs. expenses bars ── */
+  --color-chart-income:  #4C6B54;
+  --color-chart-expense: #D9B48A;
+
   /* ── Semantic aliases ── */
   --color-page-bg:       var(--color-cream);
   --color-text-primary:  var(--color-gray-900);
@@ -58,8 +69,9 @@
   --color-border-strong: var(--color-gray-100);
 
   /* ── Typography ── */
-  --font-family-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-family-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   --font-family-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif; /* page greetings only */
 
   /* ── Border radius ── */
   --radius-sm:   6px;
@@ -127,7 +139,7 @@ html {
 }
 
 :root {
-  --background:  oklch(1 0 0);
+  --background:  #FAF7F2;        /* ← updated to match cream */
   --foreground:  oklch(0.145 0 0);
   --card:  oklch(1 0 0);
   --card-foreground:  oklch(0.145 0 0);

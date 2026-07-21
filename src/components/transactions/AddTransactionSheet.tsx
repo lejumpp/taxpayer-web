@@ -21,7 +21,7 @@ export default function AddTransactionSheet({ open, onOpenChange }: AddTransacti
             Record a new income or expense.
           </SheetDescription>
         </SheetHeader>
-        <div className="px-6 py-8 text-center text-[13px] text-[#888780]">
+        <div className="px-6 py-8 text-center text-sm text-[#888780]">
           Transaction form coming soon.
         </div>
       </SheetContent>

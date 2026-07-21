@@ -31,12 +31,12 @@ export default function AppShell() {
         {/* Logo — must be exactly 60px to align with header */}
         <div className="h-[60px] flex items-center px-5 border-b border-[#E8D9C0] flex-shrink-0">
           <LogoMark />
-          <span className="ml-2.5 text-[15px] font-semibold text-[#2C2C2A]">TaxPayer</span>
+          <span className="ml-2.5 text-base font-semibold text-[#2C2C2A]">TaxPayer</span>
         </div>
 
         {/* Nav items */}
         <nav className="flex-1 overflow-y-auto px-3 py-3">
-          <p className="px-[10px] pt-[10px] pb-[5px] text-[10px] font-medium uppercase tracking-[0.07em] text-[#B4B2A9]">
+          <p className="px-[10px] pt-[10px] pb-[5px] text-xs font-medium uppercase tracking-[0.07em] text-[#B4B2A9]">
             Main
           </p>
           {mainItems.map(item => (
@@ -57,9 +57,9 @@ export default function AppShell() {
                     className={isActive ? 'text-[#C04828]' : 'text-[#888780]'}
                     aria-hidden="true"
                   />
-                  <span className="text-[13px]">{item.label}</span>
+                  <span className="text-sm">{item.label}</span>
                   {item.pro && (
-                    <span className="ml-auto text-[10px] font-medium bg-[#FDF2EC] text-[#C04828] px-2 py-0.5 rounded-full border border-[#F5C9B2]">
+                    <span className="ml-auto text-xs font-medium bg-[#FDF2EC] text-[#C04828] px-2 py-0.5 rounded-full border border-[#F5C9B2]">
                       Pro
                     </span>
                   )}
@@ -68,7 +68,7 @@ export default function AppShell() {
             </NavLink>
           ))}
 
-          <p className="px-[10px] pt-[10px] pb-[5px] text-[10px] font-medium uppercase tracking-[0.07em] text-[#B4B2A9]">
+          <p className="px-[10px] pt-[10px] pb-[5px] text-xs font-medium uppercase tracking-[0.07em] text-[#B4B2A9]">
             Account
           </p>
           {accountItems.map(item => (
@@ -88,7 +88,7 @@ export default function AppShell() {
                     className={isActive ? 'text-[#C04828]' : 'text-[#888780]'}
                     aria-hidden="true"
                   />
-                  <span className="text-[13px]">{item.label}</span>
+                  <span className="text-sm">{item.label}</span>
                 </>
               )}
             </NavLink>
@@ -100,10 +100,10 @@ export default function AppShell() {
           <div className="flex items-center gap-[10px] px-3 py-2.5 rounded-[10px] bg-[#F9F8F5]">
             <UserAvatar firstName={user?.firstName ?? ''} lastName={user?.lastName ?? ''} className="w-8.5 h-8.5 text-xs" />
             <div className="flex-1 min-w-0">
-              <p className="text-[12px] font-medium text-[#2C2C2A] truncate">
+              <p className="text-xs font-medium text-[#2C2C2A] truncate">
                 {user?.firstName} {user?.lastName}
               </p>
-              <p className="text-[11px] text-[#888780]">{accountTypeLabel}</p>
+              <p className="text-xs text-[#888780]">{accountTypeLabel}</p>
             </div>
             <button
               onClick={handleLogout}
@@ -122,7 +122,7 @@ export default function AppShell() {
         <header className="hidden lg:flex h-[60px] items-center px-6 bg-white border-b border-[#E8D9C0] sticky top-0 z-10 gap-4">
           <div className="flex items-center gap-2 bg-[#F9F8F5] rounded-[10px] px-[14px] py-2 border border-[#E8D9C0] flex-1 max-w-[340px] cursor-text">
             <Search size={15} className="text-[#B4B2A9]" aria-hidden="true" />
-            <span className="text-[13px] text-[#B4B2A9]">Search transactions...</span>
+            <span className="text-sm text-[#B4B2A9]">Search transactions...</span>
           </div>
 
           <div className="ml-auto flex items-center gap-3">
@@ -133,7 +133,7 @@ export default function AppShell() {
               <Bell size={18} className="text-[#5F5E5A]" aria-hidden="true" />
             </button>
 
-            <UserAvatar firstName={user?.firstName ?? ''} lastName={user?.lastName ?? ''} className="w-9.5 h-9.5 text-[12px] cursor-pointer" />
+            <UserAvatar firstName={user?.firstName ?? ''} lastName={user?.lastName ?? ''} className="w-9.5 h-9.5 text-xs cursor-pointer" />
           </div>
         </header>
 

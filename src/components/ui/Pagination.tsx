@@ -42,7 +42,7 @@ function PageBtn({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`w-8 h-8 rounded-lg border text-[13px] flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+      className={`w-8 h-8 rounded-lg border text-sm flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
         active
           ? 'bg-brand-400 border-brand-400 text-white font-medium'
           : 'bg-white border-cream-border text-[#5F5E5A] hover:bg-[#F9F8F5]'
@@ -71,7 +71,7 @@ export default function Pagination({
 
   return (
     <div className="flex items-center justify-between px-5 py-3.5 border-t border-cream-border gap-3 flex-wrap">
-      <p className="text-[12px] text-[#888780]">
+      <p className="text-xs text-[#888780]">
         Showing{' '}
         <span className="font-medium text-[#2C2C2A]">{from}–{to}</span>
         {' '}of{' '}
@@ -82,11 +82,11 @@ export default function Pagination({
       <div className="flex items-center gap-2 ml-auto">
         {onPageSizeChange && (
           <div className="flex items-center gap-1.5">
-            <span className="text-[12px] text-[#888780]">Rows</span>
+            <span className="text-xs text-[#888780]">Rows</span>
             <select
               value={pageSize}
               onChange={e => onPageSizeChange(Number(e.target.value))}
-              className="px-2 py-1 rounded-lg border border-cream-border bg-white text-[12px] text-[#5F5E5A] outline-none"
+              className="px-2 py-1 rounded-lg border border-cream-border bg-white text-xs text-[#5F5E5A] outline-none"
             >
               {PAGE_SIZE_OPTIONS.map(n => (
                 <option key={n} value={n}>{n}</option>
@@ -112,7 +112,7 @@ export default function Pagination({
 
         {pages.map((page, i) =>
           page === '...' ? (
-            <span key={`dots-${i}`} className="text-[13px] text-gray-200 px-1">
+            <span key={`dots-${i}`} className="text-sm text-gray-200 px-1">
               …
             </span>
           ) : (

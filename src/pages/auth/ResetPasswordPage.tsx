@@ -144,7 +144,7 @@ export default function ResetPasswordPage() {
         {userId && token && status === 'idle' && (
           <>
             <div className="space-y-1">
-              <h2 className="text-[22px] font-medium text-gray-900">Reset your password</h2>
+              <h2 className="text-2xl font-medium text-gray-900">Reset your password</h2>
               <p className="text-sm text-gray-600">Enter a new password below.</p>
             </div>
 

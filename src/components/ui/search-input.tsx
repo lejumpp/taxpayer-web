@@ -26,7 +26,7 @@ export function SearchInput({ value, onChange, onSearch, placeholder, isLoading,
           value={value}
           onChange={e => onChange(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && onSearch()}
-          className="text-[13px] text-gray-900 placeholder:text-gray-200"
+          className="text-sm text-gray-900 placeholder:text-gray-200"
         />
         {isLoading && (
           <InputGroupAddon align="inline-end">
@@ -38,7 +38,7 @@ export function SearchInput({ value, onChange, onSearch, placeholder, isLoading,
         type="button"
         variant="outline"
         onClick={onSearch}
-        className="rounded-lg border-cream-border bg-white text-[13px] text-gray-600 font-medium hover:bg-gray-50"
+        className="rounded-lg border-cream-border bg-white text-sm text-gray-600 font-medium hover:bg-gray-50"
       >
         Search
       </Button>

@@ -33,7 +33,7 @@ export default function DataTable<T>({
           {columns.map(col => (
             <th
               key={col.key}
-              className={`px-5 py-2.5 text-left text-[11px] font-bold text-[#2C2C2A] uppercase tracking-[0.05em] ${col.className ?? ''} ${col.headerClassName ?? ''}`}
+              className={`px-5 py-2.5 text-left text-xs font-bold text-[#2C2C2A] uppercase tracking-[0.05em] ${col.className ?? ''} ${col.headerClassName ?? ''}`}
             >
               {col.header}
             </th>

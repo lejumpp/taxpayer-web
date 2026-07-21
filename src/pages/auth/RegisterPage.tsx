@@ -121,7 +121,7 @@ export default function RegisterPage() {
 
         <div className="space-y-8">
           <div className="space-y-3">
-            <h1 className="text-[40px] font-bold leading-tight tracking-tight">
+            <h1 className="text-4xl font-bold leading-tight tracking-tight">
               File with<br />confidence.
             </h1>
             <p className="text-white/70 text-base leading-relaxed">
@@ -176,7 +176,7 @@ export default function RegisterPage() {
           ) : (
             <div className="w-full max-w-100 space-y-7">
               <div className="space-y-1">
-                <h2 className="text-[22px] font-medium text-gray-900">Create an account</h2>
+                <h2 className="text-2xl font-medium text-gray-900">Create an account</h2>
                 <p className="text-sm text-gray-600">Takes less than a minute.</p>
               </div>
 
@@ -431,7 +431,7 @@ function SuccessState({
       </div>
 
       <div className="space-y-2">
-        <h2 className="text-[22px] font-medium text-gray-900">Check your inbox</h2>
+        <h2 className="text-2xl font-medium text-gray-900">Check your inbox</h2>
         <p className="text-sm text-gray-600 leading-relaxed">
           We've sent a verification link to{' '}
           <span className="font-medium text-gray-900">{email}</span>

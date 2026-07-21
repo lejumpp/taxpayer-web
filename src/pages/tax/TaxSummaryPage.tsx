@@ -8,7 +8,7 @@ const isPremium = false
 
 function SectionLabel({ label }: { label: string }) {
   return (
-    <p className="text-[10px] font-medium text-gray-200 uppercase tracking-[0.07em] px-6 pt-3.5 pb-2">
+    <p className="text-xs font-medium text-gray-200 uppercase tracking-[0.07em] px-6 pt-3.5 pb-2">
       {label}
     </p>
   )
@@ -27,14 +27,14 @@ function StandardRow({
 }) {
   return (
     <div className="flex items-center justify-between px-6 py-3.5 border-b border-gray-50 last:border-0">
-      <div className="flex items-center gap-2 text-[14px] text-[#5F5E5A]">
+      <div className="flex items-center gap-2 text-sm text-[#5F5E5A]">
         {label}
         {tooltip && <InfoTooltip content={tooltip} />}
       </div>
       {deduction ? (
-        <span className="text-[14px] font-medium text-[#888780] tabular-nums">−{value}</span>
+        <span className="text-sm font-medium text-[#888780] tabular-nums">−{value}</span>
       ) : (
-        <span className="text-[14px] font-medium text-[#2C2C2A] tabular-nums">{value}</span>
+        <span className="text-sm font-medium text-[#2C2C2A] tabular-nums">{value}</span>
       )}
     </div>
   )
@@ -43,8 +43,8 @@ function StandardRow({
 function SubtotalRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between px-6 py-3.5 bg-gray-25">
-      <span className="text-[14px] font-medium text-[#2C2C2A]">{label}</span>
-      <span className="text-[15px] font-medium text-[#2C2C2A] tabular-nums">{value}</span>
+      <span className="text-sm font-medium text-[#2C2C2A]">{label}</span>
+      <span className="text-base font-medium text-[#2C2C2A] tabular-nums">{value}</span>
     </div>
   )
 }
@@ -52,8 +52,8 @@ function SubtotalRow({ label, value }: { label: string; value: string }) {
 function TotalRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between px-6 py-3.5 bg-brand-50 border-t border-brand-100">
-      <span className="text-[15px] font-medium text-[#2C2C2A]">{label}</span>
-      <span className="text-[16px] font-semibold text-[#993C1D] tabular-nums">{value}</span>
+      <span className="text-base font-medium text-[#2C2C2A]">{label}</span>
+      <span className="text-base font-semibold text-[#993C1D] tabular-nums">{value}</span>
     </div>
   )
 }
@@ -102,7 +102,7 @@ export default function TaxSummaryPage() {
         <button
           key={year}
           onClick={() => setSelectedYear(year)}
-          className={`px-3.5 py-1.5 text-[13px] font-['Inter'] border-none cursor-pointer transition-colors ${
+          className={`px-3.5 py-1.5 text-sm font-['Inter'] border-none cursor-pointer transition-colors ${
             selectedYear === year
               ? 'bg-brand-400 text-white font-medium'
               : 'bg-transparent text-[#5F5E5A] hover:bg-gray-25'
@@ -118,12 +118,12 @@ export default function TaxSummaryPage() {
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-[22px] font-medium text-[#2C2C2A]">
+          <h1 className="text-2xl font-medium text-[#2C2C2A]">
             {selectedYear} tax summary
           </h1>
           <div className="flex items-center gap-2 mt-1">
-            <span className="inline-flex items-center gap-1 bg-brand-50 border border-brand-100 rounded-full px-2.5 py-0.5 text-[11px] font-medium text-[#993C1D]">
-              <i className="ti ti-calculator text-[10px]" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1 bg-brand-50 border border-brand-100 rounded-full px-2.5 py-0.5 text-xs font-medium text-[#993C1D]">
+              <i className="ti ti-calculator text-xs" aria-hidden="true" />
               Estimate
             </span>
           </div>
@@ -133,7 +133,7 @@ export default function TaxSummaryPage() {
 
       {/* Hero banner */}
       <div className="bg-[#2C2C2A] rounded-2xl px-8 py-7 mb-5">
-        <p className="text-[11px] font-medium text-white/40 uppercase tracking-[0.07em] mb-2.5">
+        <p className="text-xs font-medium text-white/40 uppercase tracking-[0.07em] mb-2.5">
           Estimated total tax & contributions
         </p>
         {isLoading ? (
@@ -143,10 +143,10 @@ export default function TaxSummaryPage() {
           </div>
         ) : (
           <>
-            <p className="text-[44px] font-semibold text-white tabular-nums tracking-[-0.02em] mb-2">
+            <p className="text-5xl font-semibold text-white tabular-nums tracking-[-0.02em] mb-2">
               {formatJMD(taxSummary?.breakdown.totalStatutoryLiabilityCents ?? 0)}
             </p>
-            <p className="text-[13px] text-white/50">
+            <p className="text-sm text-white/50">
               On net profit of{' '}
               <span className="text-white/80">
                 {formatJMD(taxSummary?.netProfitCents ?? 0)}
@@ -160,9 +160,9 @@ export default function TaxSummaryPage() {
       {isEmpty ? (
         <div className="bg-white rounded-2xl border border-cream-border mb-4">
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <i className="ti ti-file-invoice text-[40px] text-[#D3D1C7] mb-4" aria-hidden="true" />
-            <p className="text-[15px] font-medium text-[#2C2C2A] mb-1">No data for {selectedYear}</p>
-            <p className="text-[13px] text-[#888780]">
+            <i className="ti ti-file-invoice text-4xl text-[#D3D1C7] mb-4" aria-hidden="true" />
+            <p className="text-base font-medium text-[#2C2C2A] mb-1">No data for {selectedYear}</p>
+            <p className="text-sm text-[#888780]">
               Add transactions for {selectedYear} to see your tax estimate.
             </p>
           </div>
@@ -255,11 +255,11 @@ export default function TaxSummaryPage() {
       {/* Estimates note */}
       <div className="bg-white rounded-2xl border border-cream-border px-5 py-4 flex items-start gap-3 mb-4">
         <div className="w-8 h-8 rounded-lg bg-info-50 flex items-center justify-center shrink-0">
-          <i className="ti ti-info-circle text-info-600 text-[16px]" aria-hidden="true" />
+          <i className="ti ti-info-circle text-info-600 text-base" aria-hidden="true" />
         </div>
         <div>
-          <p className="text-[13px] font-medium text-[#2C2C2A] mb-1">These are estimates</p>
-          <p className="text-[12px] text-[#888780] leading-relaxed">
+          <p className="text-sm font-medium text-[#2C2C2A] mb-1">These are estimates</p>
+          <p className="text-xs text-[#888780] leading-relaxed">
             Figures are calculated based on transactions you've logged. NIS, NHT, and Education tax
             rates are confirmed for {selectedYear}. Verify your final figures directly with TAJ before filing.
           </p>
@@ -271,19 +271,19 @@ export default function TaxSummaryPage() {
         <div className="bg-[#2C2C2A] rounded-2xl px-6 py-5 flex items-center justify-between gap-5">
           <div>
             <div className="inline-flex items-center gap-1.5 bg-brand-400 rounded-full px-2.5 py-1 mb-2">
-              <i className="ti ti-star text-white text-[11px]" aria-hidden="true" />
-              <span className="text-[11px] font-medium text-white">Pro</span>
+              <i className="ti ti-star text-white text-xs" aria-hidden="true" />
+              <span className="text-xs font-medium text-white">Pro</span>
             </div>
-            <p className="text-[16px] font-medium text-white mb-1">
+            <p className="text-base font-medium text-white mb-1">
               Get your S04 line-by-line breakdown
             </p>
-            <p className="text-[13px] text-white/50">
+            <p className="text-sm text-white/50">
               Copy each field directly to the TAJ portal. No accountant needed.
             </p>
           </div>
           <button
             onClick={() => navigate('/upgrade')}
-            className="shrink-0 bg-brand-400 hover:bg-[#993C1D] text-white border-none rounded-[10px] px-5 py-2.5 text-[13px] font-medium font-['Inter'] cursor-pointer transition-colors whitespace-nowrap"
+            className="shrink-0 bg-brand-400 hover:bg-[#993C1D] text-white border-none rounded-[10px] px-5 py-2.5 text-sm font-medium font-['Inter'] cursor-pointer transition-colors whitespace-nowrap"
           >
             Upgrade to Pro
           </button>

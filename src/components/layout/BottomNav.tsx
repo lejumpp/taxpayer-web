@@ -12,7 +12,7 @@ export default function BottomNav() {
             to={item.path}
             end={item.path === '/tax'}
             className={({ isActive }) =>
-              `flex-1 flex flex-col items-center py-3 gap-1 text-[10px] ${
+              `flex-1 flex flex-col items-center py-3 gap-1 text-xs ${
                 isActive ? 'text-brand-400' : 'text-[#888780]'
               }`
             }

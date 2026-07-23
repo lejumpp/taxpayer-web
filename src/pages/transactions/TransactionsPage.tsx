@@ -72,7 +72,7 @@ function StatCard({
         </div>
         <span className="text-xs text-[#888780]">{label}</span>
       </div>
-      <p className="text-2xl font-semibold tabular break-words" style={{ color: valueColor }}>
+      <p className="text-2xl font-semibold tabular wrap-break-word" style={{ color: valueColor }}>
         {value ?? '—'}
       </p>
     </div>
@@ -312,7 +312,7 @@ export default function TransactionsPage() {
               e.stopPropagation()
               setEditTarget(txn)
             }}
-            className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-[#F1EFE8] text-[#888780] hover:text-[#5F5E5A]"
+            className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-50 text-[#888780] hover:text-[#5F5E5A]"
             aria-label="Edit transaction"
           >
             <Pencil size={13} aria-hidden="true" />
@@ -582,7 +582,7 @@ export default function TransactionsPage() {
 
       {/* Delete confirmation */}
       <Dialog open={!!deleteTargetId} onOpenChange={open => !open && setDeleteTargetId(null)}>
-        <DialogContent className="max-w-[400px] p-0 gap-0 rounded-2xl overflow-hidden">
+        <DialogContent className="max-w-100 p-0 gap-0 rounded-2xl overflow-hidden">
           <DialogHeader className="px-6 pt-5 pb-4 border-b border-[#EDEBE4]">
             <DialogTitle className="text-lg font-medium text-[#2C2C2A]">
               Delete transaction?
@@ -596,7 +596,7 @@ export default function TransactionsPage() {
           <div className="flex gap-2 px-6 py-4 border-t border-[#EDEBE4]">
             <button
               onClick={() => setDeleteTargetId(null)}
-              className="flex-1 py-2.5 rounded-lg border border-[#EDEBE4] text-sm font-medium text-[#5F5E5A] bg-white hover:bg-[#F9F8F5] transition-colors"
+              className="flex-1 py-2.5 rounded-lg border border-[#EDEBE4] text-sm font-medium text-[#5F5E5A] bg-white hover:bg-gray-25 transition-colors"
             >
               Cancel
             </button>

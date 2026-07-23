@@ -6,11 +6,9 @@ import {
   TrendingUp,
   Receipt,
   Wallet,
-  Plus,
-  Minus,
-  ChevronRight,
   ArrowRight,
   Inbox,
+  Plus,
   PieChart as PieChartIcon,
   BarChart3,
 } from "lucide-react";
@@ -64,9 +62,9 @@ const EXPENSE_BAR_COLORS = ["bg-brand-400", "bg-gold-400", "bg-success-400", "bg
 
 function getGreeting(): string {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return "Good Morning";
+  if (hour < 17) return "Good Afternoon";
+  return "Good Evening";
 }
 
 // ─── Money — large figures with de-emphasized decimals ────────────────────────
@@ -76,9 +74,21 @@ function Money({ cents, className = "" }: { cents: number; className?: string })
   return (
     <span className={className}>
       {whole}
-      <span className="font-normal text-small opacity-45">{decimal}</span>
+      <span className="font-normal text-sm opacity-45">{decimal}</span>
     </span>
   );
+}
+
+// ─── Filing deadline ──────────────────────────────────────────────────────────
+
+function getFilingDeadline(taxYear: number): Date {
+  return new Date(taxYear + 1, 2, 15); // March 15 next year
+}
+
+function getDaysRemaining(deadline: Date): number {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // local midnight, not UTC
+  return Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 }
 
 // ─── Skeletons ────────────────────────────────────────────────────────────────
@@ -139,7 +149,6 @@ export default function DashboardPage() {
   const taxYear = new Date().getFullYear();
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<"Income" | "Expense">("Income");
 
   const { data: transactionData, isLoading: txnsLoading } = useDashboardTransactions();
   const { data: taxSummary, isLoading: taxLoading } = useTaxSummary(taxYear);
@@ -147,15 +156,9 @@ export default function DashboardPage() {
 
   const summary = transactionData?.summary;
 
-  function handleAddIncome() {
-    setModalType("Income");
-    setModalOpen(true);
-  }
-
-  function handleAddExpense() {
-    setModalType("Expense");
-    setModalOpen(true);
-  }
+  const filingDeadline = getFilingDeadline(taxYear);
+  const daysRemaining = getDaysRemaining(filingDeadline);
+  const isUrgent = daysRemaining <= 30;
 
   const totalOwedCents = taxSummary?.breakdown.totalStatutoryLiabilityCents ?? 0;
   const grossIncomeCents = summary?.totalIncomeCents ?? 0;
@@ -209,13 +212,23 @@ export default function DashboardPage() {
   return (
     <div className="p-6">
       {/* Greeting */}
-      <div className="mb-6">
-        <h1 className="font-display text-3xl leading-tight text-gray-900">
-          {getGreeting()}, {user?.firstName}
-        </h1>
-        <p className="text-sm text-gray-400 mt-1">
-          Tax year {taxYear} · Here's your financial overview
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h1 className="font-display text-3xl leading-tight text-gray-900">
+            {getGreeting()}, {user?.firstName}
+          </h1>
+          <p className="text-sm text-gray-400 mt-1">
+            Tax year {taxYear} · Here's your financial overview
+          </p>
+        </div>
+
+        <button
+          onClick={() => setModalOpen(true)}
+          className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-brand-400 text-white text-sm font-medium w-full sm:w-auto shrink-0"
+        >
+          <Plus size={16} aria-hidden="true" />
+          Add transaction
+        </button>
       </div>
 
       {/* Row 1 — Stat cards */}
@@ -240,7 +253,7 @@ export default function DashboardPage() {
               <div>
                 <Money
                   cents={totalOwedCents}
-                  className="text-xl font-medium text-white tabular-nums wrap-break-word"
+                  className="text-2xl font-bold text-white tabular-nums wrap-break-word"
                 />
                 <p className="text-xs text-white/60 mt-1">Due Mar 15, {taxYear + 1}</p>
               </div>
@@ -257,7 +270,7 @@ export default function DashboardPage() {
               <div>
                 <Money
                   cents={grossIncomeCents}
-                  className="text-xl font-medium text-success-600 tabular-nums wrap-break-word"
+                  className="text-2xl font-bold text-success-600 tabular-nums wrap-break-word"
                 />
                 <p className="text-xs text-success-600 mt-1 flex items-center gap-1">
                   <span aria-hidden="true">▲</span> Full year
@@ -276,7 +289,7 @@ export default function DashboardPage() {
               <div>
                 <Money
                   cents={totalExpensesCents}
-                  className="text-xl font-medium text-gray-900 tabular-nums wrap-break-word"
+                  className="text-2xl font-bold text-gray-900 tabular-nums wrap-break-word"
                 />
                 <p className="text-xs text-gray-400 mt-1">
                   {totalExpensesCents === 0
@@ -297,7 +310,7 @@ export default function DashboardPage() {
               <div>
                 <Money
                   cents={netProfitCents}
-                  className="text-xl font-medium text-gray-900 tabular-nums wrap-break-word"
+                  className="text-2xl font-bold text-gray-900 tabular-nums wrap-break-word"
                 />
                 <p className="text-xs text-gray-400 mt-1">{marginPct}% margin</p>
               </div>
@@ -306,7 +319,7 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Row 2 — Tax breakdown, Add transaction */}
+      {/* Row 2 — Tax breakdown, Filing deadline */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
         {/* Widget 2 — Tax breakdown / Cashflow */}
         <Card className={`${CARD} md:col-span-2 p-5`}>
@@ -459,40 +472,43 @@ export default function DashboardPage() {
           </Tabs>
         </Card>
 
-        {/* Widget 3 — Add transaction */}
-        <Card className={`${CARD} p-5`}>
-          <p className="text-sm font-medium text-gray-900 mb-1">Add transaction</p>
-          <p className="text-xs text-gray-400 mb-4">Record a new income or expense</p>
-
-          <div className="flex flex-col gap-2.5">
-            <button
-              onClick={handleAddIncome}
-              className="flex items-center gap-2.5 p-3 rounded-xl border border-success-100 bg-success-50 hover:bg-success-100 transition-colors w-full"
+        {/* Widget 3 — Filing deadline */}
+        <Card className={`${CARD} p-6 justify-between`}>
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-base font-bold text-gray-900">Next filing due</p>
+              <span
+                className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                  isUrgent ? "bg-brand-400 text-white" : "bg-brand-100 text-brand-600"
+                }`}
+              >
+                {daysRemaining <= 0 ? "Due today" : `${daysRemaining} days`}
+              </span>
+            </div>
+            <p
+              className={`text-4xl font-bold tabular-nums ${
+                isUrgent ? "text-brand-600" : "text-gray-900"
+              }`}
             >
-              <div className="w-8.5 h-8.5 rounded-lg bg-success-400 flex items-center justify-center shrink-0">
-                <Plus size={16} className="text-white" aria-hidden="true" />
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-medium text-success-600">Add income</p>
-                <p className="text-xs text-success-400">Sales, fees, revenue</p>
-              </div>
-              <ChevronRight size={15} className="text-gray-200 ml-auto" aria-hidden="true" />
-            </button>
-
-            <button
-              onClick={handleAddExpense}
-              className="flex items-center gap-2.5 p-3 rounded-xl border border-brand-100 bg-brand-50 hover:bg-brand-100 transition-colors w-full"
-            >
-              <div className="w-8.5 h-8.5 rounded-lg bg-brand-400 flex items-center justify-center shrink-0">
-                <Minus size={16} className="text-white" aria-hidden="true" />
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-medium text-brand-600">Add expense</p>
-                <p className="text-xs text-brand-400">Rent, utilities, vehicle</p>
-              </div>
-              <ChevronRight size={15} className="text-gray-200 ml-auto" aria-hidden="true" />
-            </button>
+              {filingDeadline.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </p>
+            <p className="text-sm text-gray-400 mt-2">Estimated income-tax return, TY{taxYear}</p>
           </div>
+
+          <Link
+            to="/tax"
+            className={`mt-6 flex items-center justify-center text-sm font-bold rounded-full py-3 border transition-colors ${
+              isUrgent
+                ? "border-transparent bg-brand-50 text-brand-600 hover:bg-brand-100"
+                : "border-cream-border text-brand-600 hover:bg-gray-25"
+            }`}
+          >
+            Review filing
+          </Link>
         </Card>
       </div>
 
@@ -574,7 +590,7 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <TransactionModal open={modalOpen} onClose={() => setModalOpen(false)} defaultType={modalType} />
+      <TransactionModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 }

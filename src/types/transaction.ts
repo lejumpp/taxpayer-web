@@ -46,6 +46,20 @@ export interface TransactionCategory {
   isTaxDeductible: boolean
 }
 
+export interface ExpenseBreakdownCategory {
+  category: string | null
+  categoryDisplayName: string
+  amountCents: number
+  transactionCount: number
+  percentageOfTotal: number
+}
+
+export interface ExpenseBreakdown {
+  year: number
+  totalExpensesCents: number
+  categories: ExpenseBreakdownCategory[]
+}
+
 export interface CreateTransactionPayload {
   type: 'Income' | 'Expense'
   amountCents: number

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { startOfMonth, subMonths } from 'date-fns'
-import { getTransactions } from '@/services/transactions'
+import { getTransactions, getExpenseBreakdown } from '@/services/transactions'
 import { getTaxSummaryByYear } from '@/services/tax'
 import { toLocalDateString, todayLocal } from '@/lib/dates'
 
@@ -18,6 +18,14 @@ export function useCashflowTransactions() {
   return useQuery({
     queryKey: ['transactions', 'cashflow', fromDate, toDate],
     queryFn: () => getTransactions({ fromDate, toDate, pageNumber: 1, pageSize: 100 }),
+    staleTime: 1000 * 60 * 5,
+  })
+}
+
+export function useExpenseBreakdown(year: number) {
+  return useQuery({
+    queryKey: ['transactions', 'expense-breakdown', year],
+    queryFn: () => getExpenseBreakdown(year),
     staleTime: 1000 * 60 * 5,
   })
 }

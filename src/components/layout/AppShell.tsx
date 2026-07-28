@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { LogOut, Search, Bell } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
+import { useSubscription } from '../../context/SubscriptionContext'
 import { logout } from '../../services/auth'
 import { navItems } from '../../lib/nav'
 import UserAvatar from '../ui/UserAvatar'
@@ -8,6 +9,7 @@ import BottomNav from './BottomNav'
 
 export default function AppShell() {
   const { user, setUser } = useAuth()
+  const { isPremium } = useSubscription()
   const navigate = useNavigate()
 
   const accountTypeLabel = user?.accountType === 'Individual' ? 'Individual' : 'Business'
@@ -42,7 +44,7 @@ export default function AppShell() {
           {mainItems.map(item => (
             <NavLink
               key={item.path}
-              to={item.path}
+              to={item.pro && !isPremium ? '/upgrade' : item.path}
               end={item.path === '/tax'}
               className={({ isActive }) =>
                 isActive
@@ -58,7 +60,7 @@ export default function AppShell() {
                     aria-hidden="true"
                   />
                   <span className="text-sm">{item.label}</span>
-                  {item.pro && (
+                  {item.pro && !isPremium && (
                     <span className="ml-auto text-xs font-medium bg-[#FDF2EC] text-[#C04828] px-2 py-0.5 rounded-full border border-[#F5C9B2]">
                       Pro
                     </span>

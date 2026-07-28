@@ -10,6 +10,11 @@ export const AccountTypeLabel: Record<AccountTypeValue, string> = {
   [AccountType.Business]: 'Business',
 }
 
+export const PlanInterval = {
+  Monthly: 1,
+  Annual: 2,
+} as const
+
 export const oauthErrorMessages: Record<string, string> = {
   google_denied: 'Google sign in was cancelled.',
   invalid_state: 'Sign in session expired. Please try again.',

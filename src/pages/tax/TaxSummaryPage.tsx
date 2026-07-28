@@ -2,9 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import InfoTooltip from '../../components/ui/InfoTooltip'
 import { useTaxSummary } from '../../hooks/useDashboard'
+import { useSubscription } from '../../context/SubscriptionContext'
 import { formatJMD } from '../../lib/currency'
-
-const isPremium = false
 
 function SectionLabel({ label }: { label: string }) {
   return (
@@ -73,6 +72,7 @@ function SkeletonRows({ count }: { count: number }) {
 
 export default function TaxSummaryPage() {
   const navigate = useNavigate()
+  const { isPremium } = useSubscription()
   const currentYear = new Date().getFullYear()
   const [selectedYear, setSelectedYear] = useState(currentYear)
   const availableYears = [currentYear - 2, currentYear - 1, currentYear]

@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import {
   FileText,
@@ -14,7 +15,12 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
-import { useDashboardTransactions, useTaxSummary, useCashflowTransactions } from "@/hooks/useDashboard";
+import {
+  useDashboardTransactions,
+  useTaxSummary,
+  useCashflowTransactions,
+  useExpenseBreakdown,
+} from "@/hooks/useDashboard";
 import {
   formatJMD,
   formatJMDParts,
@@ -146,13 +152,22 @@ function SkeletonBarRow() {
 export default function DashboardPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const taxYear = new Date().getFullYear();
 
   const [modalOpen, setModalOpen] = useState(false);
 
+  useEffect(() => {
+    if (searchParams.get("upgraded") === "true") {
+      toast.success("Welcome to Pro! You now have full access.");
+      setSearchParams({});
+    }
+  }, [searchParams, setSearchParams]);
+
   const { data: transactionData, isLoading: txnsLoading } = useDashboardTransactions();
   const { data: taxSummary, isLoading: taxLoading } = useTaxSummary(taxYear);
   const { data: cashflowData, isLoading: cashflowLoading } = useCashflowTransactions();
+  const { data: expenseBreakdown, isLoading: expenseBreakdownLoading } = useExpenseBreakdown(taxYear);
 
   const summary = transactionData?.summary;
 
@@ -176,24 +191,18 @@ export default function DashboardPage() {
       : [{ name: "None", value: 1, color: "var(--color-gray-50)" }];
 
   const expenseData = (() => {
-    if (!transactionData?.items) return [];
-    const grouped = transactionData.items
-      .filter((t) => t.type === "Expense")
-      .reduce<{ category: string; name: string; amountCents: number }[]>((acc, t) => {
-        const existing = acc.find((e) => e.category === t.category);
-        if (existing) {
-          existing.amountCents += t.amountCents;
-        } else {
-          acc.push({ category: t.category, name: t.categoryDisplayName, amountCents: t.amountCents });
-        }
-        return acc;
-      }, []);
-    const max = Math.max(...grouped.map((e) => e.amountCents), 0);
+    const categories = expenseBreakdown?.categories ?? [];
+    if (categories.length === 0) return [];
+    const max = Math.max(...categories.map((c) => c.amountCents), 0);
     if (max === 0) return [];
-    return grouped
-      .map((e) => ({ ...e, widthPct: Math.round((e.amountCents / max) * 100) }))
-      .sort((a, b) => b.amountCents - a.amountCents)
-      .slice(0, 5);
+    return categories
+      .slice(0, 5)
+      .map((c) => ({
+        category: c.category ?? "uncategorized",
+        name: c.categoryDisplayName,
+        amountCents: c.amountCents,
+        widthPct: Math.round((c.amountCents / max) * 100),
+      }));
   })();
 
   const monthlyCashflow = Array.from({ length: 6 }).map((_, i) => {
@@ -556,7 +565,7 @@ export default function DashboardPage() {
         <Card className={`${CARD} p-5`}>
           <p className="text-sm font-medium text-gray-900 mb-4">Expense breakdown</p>
 
-          {txnsLoading ? (
+          {expenseBreakdownLoading ? (
             <div className="flex flex-col gap-4">
               {Array.from({ length: 4 }).map((_, i) => (
                 <SkeletonBarRow key={i} />

@@ -5,6 +5,7 @@ import type {
   TransactionFilters,
   TransactionCategory,
   CreateTransactionPayload,
+  ExpenseBreakdown,
 } from '@/types/transaction'
 
 export async function getTransactions(filters: TransactionFilters = {}): Promise<TransactionPage> {
@@ -37,4 +38,9 @@ export async function updateTransaction(id: string, payload: CreateTransactionPa
 
 export async function deleteTransaction(id: string): Promise<void> {
   await client.delete(`/api/v1/transactions/${id}`)
+}
+
+export async function getExpenseBreakdown(year: number): Promise<ExpenseBreakdown> {
+  const { data } = await client.get('/api/v1/transactions/expense-breakdown', { params: { year } })
+  return data
 }

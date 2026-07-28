@@ -19,6 +19,7 @@ import FormSection from '@/components/ui/FormSection'
 import AccountTypeToggle from '@/components/account/AccountTypeToggle'
 import WhatsAppStatusRow from '@/components/profile/WhatsAppStatusRow'
 import { useAuth } from '@/context/AuthContext'
+import { useSubscription } from '@/context/SubscriptionContext'
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile'
 import { logout } from '@/services/auth'
 import { AccountType } from '@/lib/constants'
@@ -59,6 +60,7 @@ const labelClass = 'text-xs font-medium text-gray-600 uppercase tracking-wide'
 
 export default function ProfileSection() {
   const { setUser } = useAuth()
+  const { subscription } = useSubscription()
   const { data: profile, isLoading } = useProfile()
   const updateProfile = useUpdateProfile()
   const navigate = useNavigate()
@@ -171,9 +173,19 @@ export default function ProfileSection() {
           <div>
             <p className="text-base font-medium text-gray-900">{profile.firstName} {profile.lastName}</p>
             <p className="text-sm text-gray-400 mt-0.5">{profile.email}</p>
-            <div className="inline-flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-full mt-1.5">
-              <i className={`ti ${profile.accountType === 'Business' ? 'ti-building-store' : 'ti-user'} text-xs text-gray-400`} aria-hidden="true" />
-              {profile.accountType === 'Business' ? profile.businessName : 'Individual'}
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <div className="inline-flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-full">
+                <i className={`ti ${profile.accountType === 'Business' ? 'ti-building-store' : 'ti-user'} text-xs text-gray-400`} aria-hidden="true" />
+                {profile.accountType === 'Business' ? profile.businessName : 'Individual'}
+              </div>
+              <div
+                className={`inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full ${
+                  subscription?.isPremium ? 'bg-brand-50 text-brand-600' : 'bg-gray-50 text-gray-600'
+                }`}
+              >
+                <i className="ti ti-star text-xs" aria-hidden="true" />
+                {subscription?.isPremium ? subscription.planName ?? 'Pro' : 'Free'}
+              </div>
             </div>
           </div>
         </div>

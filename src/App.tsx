@@ -1,9 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { SubscriptionProvider } from './context/SubscriptionContext'
 import AuthGuard from './guards/AuthGuard'
 import OnboardingGuard from './guards/OnboardingGuard'
 import AppShell from './components/layout/AppShell'
+import { Toaster } from './components/ui/sonner'
 import LoginPage from './pages/auth/LoginPage'
 import RegisterPage from './pages/auth/RegisterPage'
 import VerifyEmailPage from './pages/auth/VerifyEmailPage'
@@ -16,7 +18,10 @@ import TransactionsPage from './pages/transactions/TransactionsPage'
 import TransactionDetailPage from './pages/transactions/TransactionDetailPage'
 import TaxSummaryPage from './pages/tax/TaxSummaryPage'
 import TaxAssessmentPage from './pages/tax/TaxAssessmentPage'
+import S04Page from './pages/tax/S04Page'
 import ProfilePage from './pages/profile/ProfilePage'
+import UpgradePage from './pages/payments/UpgradePage'
+import MockCheckoutPage from './pages/payments/MockCheckoutPage'
 
 const queryClient = new QueryClient()
 
@@ -40,10 +45,12 @@ function AppRoutes() {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/auth/callback" element={<CallbackPage />} />
+      {import.meta.env.DEV && <Route path="/mock-checkout" element={<MockCheckoutPage />} />}
 
       {/* Authenticated */}
       <Route element={<AuthGuard />}>
         <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route path="/upgrade" element={<UpgradePage />} />
 
         {/* Onboarding complete */}
         <Route element={<OnboardingGuard />}>
@@ -54,7 +61,7 @@ function AppRoutes() {
             <Route path="/transactions/:id" element={<TransactionDetailPage />} />
             <Route path="/tax" element={<TaxSummaryPage />} />
             <Route path="/tax/assessment" element={<TaxAssessmentPage />} />
-            <Route path="/tax/s04" element={<TaxAssessmentPage />} />
+            <Route path="/tax/s04" element={<S04Page />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>
@@ -69,9 +76,12 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <SubscriptionProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+          <Toaster />
+        </SubscriptionProvider>
       </AuthProvider>
     </QueryClientProvider>
   )

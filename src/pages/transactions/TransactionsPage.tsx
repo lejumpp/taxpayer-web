@@ -225,7 +225,11 @@ export default function TransactionsPage() {
   }
 
   function updateFilter<K extends keyof TransactionFilters>(key: K, value: TransactionFilters[K]) {
-    setFilters(prev => ({ ...prev, [key]: value, pageNumber: 1 }))
+    setFilters(prev => ({
+      ...prev,
+      [key]: value,
+      ...(key === 'pageNumber' ? {} : { pageNumber: 1 }),
+    }))
   }
 
   function clearFilters() {

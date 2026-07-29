@@ -1,9 +1,11 @@
 import { useState, startTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import {
   Plus,
   Download,
+  Loader2,
   Briefcase,
   Receipt,
   FileUp,
@@ -15,11 +17,13 @@ import {
   Hash,
   Calculator,
   Calendar as CalendarIcon,
+  FileSpreadsheet,
   X,
 } from 'lucide-react'
 
 import PageHeader from '@/components/layout/PageHeader'
 import TransactionModal from '@/components/transactions/TransactionModal'
+import BulkImportModal from '@/components/import/BulkImportModal'
 import TransactionCard from '@/components/transactions/TransactionCard'
 import DataTable from '@/components/ui/DataTable'
 import Pagination from '@/components/ui/Pagination'
@@ -42,6 +46,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useTransactions, useDeleteTransaction } from '@/hooks/useTransactions'
 import { useTransactionCategories } from '@/hooks/useTransactionCategories'
 import { getTaxSummaryByYear } from '@/services/tax'
+import { exportTransactions } from '@/services/transactions'
 import { formatJMD } from '@/lib/currency'
 import { formatDate, formatDateShort, toLocalDateString } from '@/lib/dates'
 import type { Column } from '@/components/ui/DataTable'
@@ -199,8 +204,10 @@ export default function TransactionsPage() {
   const [filters, setFilters] = useState<TransactionFilters>({ pageNumber: 1, pageSize: 10 })
   const [searchInput, setSearchInput] = useState('')
   const [addSheetOpen, setAddSheetOpen] = useState(false)
+  const [bulkImportOpen, setBulkImportOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<Transaction | null>(null)
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
+  const [isExporting, setIsExporting] = useState(false)
 
   const dateRangeInvalid = !!(
     filters.fromDate &&
@@ -244,6 +251,20 @@ export default function TransactionsPage() {
     filters.fromDate ||
     filters.toDate
   )
+
+  async function handleExport() {
+    const exportFilters = { ...filters }
+    delete exportFilters.pageNumber
+    delete exportFilters.pageSize
+    setIsExporting(true)
+    try {
+      await exportTransactions(exportFilters)
+    } catch {
+      toast.error('Export failed. Please try again.')
+    } finally {
+      setIsExporting(false)
+    }
+  }
 
   function handleDelete() {
     if (!deleteTargetId) return
@@ -345,12 +366,21 @@ export default function TransactionsPage() {
         subtitle="View and manage all your income and expenses"
         action={
           <button
-            disabled
-            title="Coming soon"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-cream-border bg-white text-sm text-[#5F5E5A] opacity-50 cursor-not-allowed"
+            onClick={handleExport}
+            disabled={isExporting}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-cream-border bg-white text-sm text-[#5F5E5A] font-medium disabled:opacity-60 transition-opacity"
           >
-            <Download size={14} aria-hidden="true" />
-            Export CSV
+            {isExporting ? (
+              <>
+                <Loader2 size={14} className="animate-spin" aria-hidden="true" />
+                Exporting...
+              </>
+            ) : (
+              <>
+                <Download size={14} aria-hidden="true" />
+                Export CSV
+              </>
+            )}
           </button>
         }
       />
@@ -483,6 +513,14 @@ export default function TransactionsPage() {
             )}
 
             <button
+              onClick={() => setBulkImportOpen(true)}
+              className="flex flex-1 items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-cream-border bg-white text-sm text-gray-600 font-medium whitespace-nowrap"
+            >
+              <FileSpreadsheet size={14} aria-hidden="true" />
+              Bulk import
+            </button>
+
+            <button
               onClick={() => setAddSheetOpen(true)}
               className="flex flex-1 items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-brand-400 text-white text-sm font-medium whitespace-nowrap"
             >
@@ -577,6 +615,8 @@ export default function TransactionsPage() {
       </div>
 
       <TransactionModal open={addSheetOpen} onClose={() => setAddSheetOpen(false)} />
+
+      <BulkImportModal open={bulkImportOpen} onClose={() => setBulkImportOpen(false)} />
 
       <TransactionModal
         open={!!editTarget}

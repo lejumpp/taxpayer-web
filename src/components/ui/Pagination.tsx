@@ -5,7 +5,7 @@ import {
   ChevronsRight,
 } from 'lucide-react'
 
-const PAGE_SIZE_OPTIONS = [10, 25, 50, 100] as const
+const PAGE_SIZE_OPTIONS = [25, 50, 100] as const
 
 export interface PaginationProps {
   pageNumber: number
@@ -45,7 +45,7 @@ function PageBtn({
       className={`w-8 h-8 rounded-lg border text-sm flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
         active
           ? 'bg-brand-400 border-brand-400 text-white font-medium'
-          : 'bg-white border-cream-border text-[#5F5E5A] hover:bg-[#F9F8F5]'
+          : 'bg-white border-cream-border text-[#5F5E5A] hover:bg-gray-25'
       }`}
       {...props}
     >

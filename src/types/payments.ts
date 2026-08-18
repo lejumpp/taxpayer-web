@@ -23,3 +23,15 @@ export interface Plan {
   paddlePriceId: string
   trialDays: number | null
 }
+
+export type PaymentStatus = 'Pending' | 'Succeeded' | 'Failed' | 'Refunded'
+
+export interface PaymentHistoryItem {
+  id: string
+  planName: string
+  amountCents: number
+  currency: string
+  status: PaymentStatus
+  method: string
+  createdAt: string
+}

@@ -1,46 +1,63 @@
+import { useState } from 'react'
 import PageHeader from '../../components/layout/PageHeader'
 import ProfileSection from './sections/ProfileSection'
+import BillingSection from './sections/BillingSection'
 
-const navSections = [
+type SettingsSection = 'profile' | 'security' | 'whatsapp' | 'billing'
+
+const navSections: Array<{
+  label: string
+  items: Array<{ label: string; icon: string; section: SettingsSection; enabled: boolean }>
+}> = [
   {
     label: 'Account',
     items: [
-      { label: 'My profile', icon: 'ti-user-circle', path: 'profile', active: true },
-      { label: 'Security', icon: 'ti-lock', path: 'security', active: false },
+      { label: 'My profile', icon: 'ti-user-circle', section: 'profile', enabled: true },
+      { label: 'Security', icon: 'ti-lock', section: 'security', enabled: false },
     ],
   },
   {
     label: 'Integrations',
     items: [
-      { label: 'WhatsApp', icon: 'ti-brand-whatsapp', path: 'whatsapp', active: false },
+      { label: 'WhatsApp', icon: 'ti-brand-whatsapp', section: 'whatsapp', enabled: false },
     ],
   },
   {
     label: 'Billing',
     items: [
-      { label: 'Plan & billing', icon: 'ti-star', path: 'billing', active: false },
+      { label: 'Plan & billing', icon: 'ti-star', section: 'billing', enabled: true },
     ],
   },
 ]
 
-function SecondaryNav() {
+function SecondaryNav({
+  activeSection,
+  onSelect,
+}: {
+  activeSection: SettingsSection
+  onSelect: (section: SettingsSection) => void
+}) {
   return (
     <>
       {/* Mobile — horizontal scrollable tab row */}
       <nav className="flex md:hidden gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-        {navSections.flatMap(section => section.items).map(item => (
-          <div
-            key={item.path}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg whitespace-nowrap shrink-0 cursor-pointer ${
-              item.active ? 'bg-brand-50' : 'bg-white border border-cream-border'
-            }`}
-          >
-            <i className={`ti ${item.icon} text-base ${item.active ? 'text-brand-400' : 'text-gray-400'}`} aria-hidden="true" />
-            <span className={`text-sm ${item.active ? 'text-brand-400 font-medium' : 'text-gray-600'}`}>
-              {item.label}
-            </span>
-          </div>
-        ))}
+        {navSections.flatMap(section => section.items).map(item => {
+          const active = item.section === activeSection
+          return (
+            <div
+              key={item.section}
+              onClick={item.enabled ? () => onSelect(item.section) : undefined}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg whitespace-nowrap shrink-0 ${
+                item.enabled ? 'cursor-pointer' : 'cursor-default opacity-50'
+              } ${active ? 'bg-brand-50' : 'bg-white border border-cream-border'}`}
+            >
+              <i className={`ti ${item.icon} text-base ${active ? 'text-brand-400' : 'text-gray-400'}`} aria-hidden="true" />
+              <span className={`text-sm ${active ? 'text-brand-400 font-medium' : 'text-gray-600'}`}>
+                {item.label}
+              </span>
+            </div>
+          )
+        })}
       </nav>
 
       {/* Desktop — grouped vertical list */}
@@ -50,19 +67,23 @@ function SecondaryNav() {
             <p className="text-xs font-medium text-gray-200 uppercase tracking-[0.07em] px-3 pt-2.5 pb-1.5">
               {section.label}
             </p>
-            {section.items.map(item => (
-              <div
-                key={item.path}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${
-                  item.active ? 'bg-brand-50' : 'hover:bg-gray-25'
-                }`}
-              >
-                <i className={`ti ${item.icon} text-base ${item.active ? 'text-brand-400' : 'text-gray-400'}`} aria-hidden="true" />
-                <span className={`text-sm ${item.active ? 'text-brand-400 font-medium' : 'text-gray-600'}`}>
-                  {item.label}
-                </span>
-              </div>
-            ))}
+            {section.items.map(item => {
+              const active = item.section === activeSection
+              return (
+                <div
+                  key={item.section}
+                  onClick={item.enabled ? () => onSelect(item.section) : undefined}
+                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-colors ${
+                    item.enabled ? 'cursor-pointer' : 'cursor-default opacity-50'
+                  } ${active ? 'bg-brand-50' : 'hover:bg-gray-25'}`}
+                >
+                  <i className={`ti ${item.icon} text-base ${active ? 'text-brand-400' : 'text-gray-400'}`} aria-hidden="true" />
+                  <span className={`text-sm ${active ? 'text-brand-400 font-medium' : 'text-gray-600'}`}>
+                    {item.label}
+                  </span>
+                </div>
+              )
+            })}
             <hr className="border-t border-gray-50 my-1.5" />
           </div>
         ))}
@@ -72,15 +93,22 @@ function SecondaryNav() {
 }
 
 export default function ProfilePage() {
+  const [activeSection, setActiveSection] = useState<SettingsSection>('profile')
+
   return (
     <div className="p-4 md:p-6">
       <PageHeader title="Settings" subtitle="Manage your account details and preferences." />
 
       <div className="flex flex-col md:flex-row gap-5">
-        <SecondaryNav />
+        <SecondaryNav activeSection={activeSection} onSelect={setActiveSection} />
 
-        <div className="flex-1 min-w-0 bg-white rounded-2xl border border-cream-border overflow-hidden">
-          <ProfileSection />
+        <div className="flex-1 min-w-0">
+          {activeSection === 'profile' && (
+            <div className="bg-white rounded-2xl border border-cream-border overflow-hidden">
+              <ProfileSection />
+            </div>
+          )}
+          {activeSection === 'billing' && <BillingSection />}
         </div>
       </div>
     </div>

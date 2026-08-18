@@ -1,8 +1,13 @@
 import client from './client'
-import type { SubscriptionInfo, Plan } from '@/types/payments'
+import type { SubscriptionInfo, Plan, PaymentHistoryItem } from '@/types/payments'
 
 export async function getSubscription(): Promise<SubscriptionInfo> {
   const { data } = await client.get<SubscriptionInfo>('/api/v1/payments/subscription')
+  return data
+}
+
+export async function getPaymentHistory(): Promise<PaymentHistoryItem[]> {
+  const { data } = await client.get<PaymentHistoryItem[]>('/api/v1/payments/history')
   return data
 }
 

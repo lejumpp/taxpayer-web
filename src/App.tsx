@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { SubscriptionProvider } from './context/SubscriptionContext'
+import { usePaddle } from './hooks/usePaddle'
 import AuthGuard from './guards/AuthGuard'
 import OnboardingGuard from './guards/OnboardingGuard'
 import AppShell from './components/layout/AppShell'
@@ -31,7 +32,7 @@ function AppRoutes() {
   if (isInitialising) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#FAEEDA]">
-        <i className="ti ti-loader-2 animate-spin text-[#C04828] text-2xl" aria-label="Loading" />
+        <i className="ti ti-loader-2 animate-spin text-brand-400 text-2xl" aria-label="Loading" />
       </div>
     )
   }
@@ -73,6 +74,8 @@ function AppRoutes() {
 }
 
 export default function App() {
+  usePaddle()
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

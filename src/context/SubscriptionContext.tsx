@@ -7,7 +7,7 @@ interface SubscriptionContextType {
   subscription: SubscriptionInfo | null
   isPremium: boolean
   isLoading: boolean
-  refresh: () => Promise<void>
+  refresh: () => Promise<SubscriptionInfo | null>
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | null>(null)
@@ -19,8 +19,14 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
 
   const load = () =>
     getSubscription()
-      .then(sub => setSubscription(sub))
-      .catch(() => setSubscription(null))
+      .then(sub => {
+        setSubscription(sub)
+        return sub
+      })
+      .catch(() => {
+        setSubscription(null)
+        return null
+      })
       .finally(() => setIsFetching(false))
 
   useEffect(() => {

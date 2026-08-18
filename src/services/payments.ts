@@ -11,7 +11,9 @@ export async function getPlans(): Promise<Plan[]> {
   return data
 }
 
-export async function createCheckout(planId: string): Promise<{ checkoutUrl: string }> {
+export async function createCheckout(
+  planId: string
+): Promise<{ checkoutUrl: string | null; transactionId: string | null }> {
   const { data } = await client.post('/api/v1/payments/checkout', { planId })
   return data
 }

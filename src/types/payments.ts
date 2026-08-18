@@ -1,9 +1,13 @@
+export type SubscriptionTier = 'Free' | 'Pro'
+export type SubscriptionStatus = 'Free' | 'Active' | 'Cancelled' | 'PastDue' | 'Expired'
+export type BillingInterval = 'Monthly' | 'Annual'
+
 export interface SubscriptionInfo {
-  tier: 0 | 1
-  status: number
+  tier: SubscriptionTier
+  status: SubscriptionStatus
   isPremium: boolean
   planName: string | null
-  interval: number | null
+  interval: BillingInterval | null
   priceCents: number | null
   currency: string | null
   expiresAt: string | null
@@ -12,9 +16,10 @@ export interface SubscriptionInfo {
 export interface Plan {
   id: string
   name: string
-  tier: number
-  interval: number
+  tier: SubscriptionTier
+  interval: BillingInterval
   priceCents: number
   currency: string
+  paddlePriceId: string
   trialDays: number | null
 }

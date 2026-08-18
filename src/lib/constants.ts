@@ -11,9 +11,11 @@ export const AccountTypeLabel: Record<AccountTypeValue, string> = {
 }
 
 export const PlanInterval = {
-  Monthly: 1,
-  Annual: 2,
+  Monthly: 'Monthly',
+  Annual: 'Annual',
 } as const
+
+export type PlanIntervalValue = typeof PlanInterval[keyof typeof PlanInterval]
 
 export const oauthErrorMessages: Record<string, string> = {
   google_denied: 'Google sign in was cancelled.',

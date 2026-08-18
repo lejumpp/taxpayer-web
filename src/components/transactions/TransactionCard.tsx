@@ -1,4 +1,4 @@
-import { ArrowUp, ArrowDown, FileUp } from 'lucide-react'
+import { ArrowUp, ArrowDown, FileUp, MessageCircle } from 'lucide-react'
 import type { Transaction } from '@/types/transaction'
 import { formatJMD } from '@/lib/currency'
 import { formatDate } from '@/lib/dates'
@@ -11,10 +11,12 @@ interface TransactionCardProps {
 export default function TransactionCard({ transaction, onClick }: TransactionCardProps) {
   const isIncome = transaction.type === 'Income'
   const isCsvImport = transaction.source === 'CsvImport'
+  const isWhatsApp = transaction.source === 'WhatsApp'
+  const isAutomated = isCsvImport || isWhatsApp
 
-  const iconBg = isCsvImport ? 'bg-info-50' : isIncome ? 'bg-success-50' : 'bg-brand-50'
-  const iconColor = isCsvImport ? 'text-info-600' : isIncome ? 'text-success-600' : 'text-brand-600'
-  const IconComponent = isCsvImport ? FileUp : isIncome ? ArrowUp : ArrowDown
+  const iconBg = isAutomated ? 'bg-info-50' : isIncome ? 'bg-success-50' : 'bg-brand-50'
+  const iconColor = isAutomated ? 'text-info-600' : isIncome ? 'text-success-600' : 'text-brand-600'
+  const IconComponent = isCsvImport ? FileUp : isWhatsApp ? MessageCircle : isIncome ? ArrowUp : ArrowDown
 
   return (
     <div
@@ -28,7 +30,7 @@ export default function TransactionCard({ transaction, onClick }: TransactionCar
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-gray-900 truncate">{transaction.description}</p>
         <p className="text-xs text-gray-400">
-          {isCsvImport ? 'CSV import' : 'Manual entry'} · {formatDate(transaction.transactionDate)}
+          {isCsvImport ? 'CSV import' : isWhatsApp ? 'WhatsApp' : 'Manual entry'} · {formatDate(transaction.transactionDate)}
         </p>
       </div>
 

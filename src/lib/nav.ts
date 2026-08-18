@@ -3,8 +3,7 @@ import {
   ArrowLeftRight,
   Receipt,
   FileText,
-  User,
-  MessageCircle,
+  User
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -23,5 +22,4 @@ export const navItems: NavItem[] = [
   { path: '/tax',          label: 'Tax',          icon: Receipt,         section: 'main',    bottomNav: true },
   { path: '/tax/s04',      label: 'S04',          icon: FileText,        section: 'main',    pro: true },
   { path: '/profile',      label: 'Profile',      icon: User,            section: 'account', bottomNav: true },
-  { path: '/whatsapp',     label: 'WhatsApp',     icon: MessageCircle,   section: 'account' },
 ]

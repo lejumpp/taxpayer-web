@@ -7,7 +7,7 @@ export interface Transaction {
   category: string
   categoryDisplayName: string
   isTaxDeductible: boolean
-  source: 'Manual' | 'CsvImport'
+  source: 'Manual' | 'CsvImport' | 'WhatsApp'
 }
 
 export interface TransactionSummary {

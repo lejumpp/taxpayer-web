@@ -2,6 +2,7 @@ import { useState } from 'react'
 import PageHeader from '../../components/layout/PageHeader'
 import ProfileSection from './sections/ProfileSection'
 import BillingSection from './sections/BillingSection'
+import WhatsAppSection from './sections/WhatsAppSection'
 
 type SettingsSection = 'profile' | 'security' | 'whatsapp' | 'billing'
 
@@ -19,7 +20,7 @@ const navSections: Array<{
   {
     label: 'Integrations',
     items: [
-      { label: 'WhatsApp', icon: 'ti-brand-whatsapp', section: 'whatsapp', enabled: false },
+      { label: 'WhatsApp', icon: 'ti-brand-whatsapp', section: 'whatsapp', enabled: true },
     ],
   },
   {
@@ -108,6 +109,7 @@ export default function ProfilePage() {
               <ProfileSection />
             </div>
           )}
+          {activeSection === 'whatsapp' && <WhatsAppSection />}
           {activeSection === 'billing' && <BillingSection />}
         </div>
       </div>

@@ -9,6 +9,7 @@ import {
   Briefcase,
   Receipt,
   FileUp,
+  MessageCircle,
   FileX,
   FilterX,
   Pencil,
@@ -87,9 +88,11 @@ function StatCard({
 function DescriptionCell({ txn }: { txn: Transaction }) {
   const isIncome = txn.type === 'Income'
   const isCsvImport = txn.source === 'CsvImport'
-  const iconBg = isCsvImport ? 'bg-info-50' : isIncome ? 'bg-success-50' : 'bg-brand-50'
-  const IconComponent = isCsvImport ? FileUp : isIncome ? Briefcase : Receipt
-  const iconColor = isCsvImport ? 'text-info-600' : isIncome ? 'text-success-600' : 'text-brand-600'
+  const isWhatsApp = txn.source === 'WhatsApp'
+  const isAutomated = isCsvImport || isWhatsApp
+  const iconBg = isAutomated ? 'bg-info-50' : isIncome ? 'bg-success-50' : 'bg-brand-50'
+  const IconComponent = isCsvImport ? FileUp : isWhatsApp ? MessageCircle : isIncome ? Briefcase : Receipt
+  const iconColor = isAutomated ? 'text-info-600' : isIncome ? 'text-success-600' : 'text-brand-600'
 
   return (
     <div className="flex items-center gap-3">
@@ -101,6 +104,8 @@ function DescriptionCell({ txn }: { txn: Transaction }) {
         <p className="text-xs text-[#888780] flex items-center gap-1">
           {isCsvImport ? (
             <><FileUp size={10} aria-hidden="true" />CSV import</>
+          ) : isWhatsApp ? (
+            <><MessageCircle size={10} aria-hidden="true" />WhatsApp</>
           ) : (
             'Manual entry'
           )}

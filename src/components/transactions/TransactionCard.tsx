@@ -20,7 +20,7 @@ export default function TransactionCard({ transaction, onClick }: TransactionCar
 
   return (
     <div
-      className="flex items-center gap-3 px-5 py-3.5 hover:bg-gray-25 cursor-pointer transition-colors"
+      className={`flex items-center gap-3 px-5 py-3.5 transition-colors ${onClick ? 'hover:bg-gray-25 cursor-pointer' : ''}`}
       onClick={onClick}
     >
       <div className={`w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 ${iconBg}`}>

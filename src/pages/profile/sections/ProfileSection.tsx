@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -65,6 +65,7 @@ export default function ProfileSection() {
   const updateProfile = useUpdateProfile()
   const navigate = useNavigate()
   const trnRef = useRef<HTMLInputElement | null>(null)
+  const [trnHighlighted, setTrnHighlighted] = useState(false)
 
   const form = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
@@ -124,6 +125,8 @@ export default function ProfileSection() {
   const focusTrn = () => {
     trnRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     trnRef.current?.focus()
+    setTrnHighlighted(true)
+    setTimeout(() => setTrnHighlighted(false), 1500)
   }
 
   const loading = isLoading || !profile
@@ -294,7 +297,9 @@ export default function ProfileSection() {
                       <FormControl>
                         <Input
                           placeholder="123-456-789"
-                          className={inputClass}
+                          className={`${inputClass} transition-shadow duration-300 ${
+                            trnHighlighted ? 'ring-3 ring-brand-400/40 border-brand-400' : ''
+                          }`}
                           {...field}
                           ref={node => {
                             ref(node)

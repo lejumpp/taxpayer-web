@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import {
@@ -151,7 +151,6 @@ function SkeletonBarRow() {
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const taxYear = new Date().getFullYear();
 
@@ -551,11 +550,7 @@ export default function DashboardPage() {
           ) : (
             <div className="divide-y divide-gray-50">
               {transactionData.items.map((txn) => (
-                <TransactionCard
-                  key={txn.id}
-                  transaction={txn}
-                  onClick={() => navigate(`/transactions/${txn.id}`)}
-                />
+                <TransactionCard key={txn.id} transaction={txn} />
               ))}
             </div>
           )}

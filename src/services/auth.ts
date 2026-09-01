@@ -22,6 +22,7 @@ export async function register(payload: {
   password: string
   accountType: 'Individual' | 'Business'
   businessName?: string
+  inviteCode?: string
 }): Promise<void> {
   await client.post('/api/v1/auth/register', payload)
 }

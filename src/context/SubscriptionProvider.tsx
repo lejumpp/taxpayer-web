@@ -1,16 +1,8 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 import { getSubscription } from '@/services/payments'
 import type { SubscriptionInfo } from '@/types/payments'
 import { useAuth } from './AuthContext'
-
-interface SubscriptionContextType {
-  subscription: SubscriptionInfo | null
-  isPremium: boolean
-  isLoading: boolean
-  refresh: () => Promise<SubscriptionInfo | null>
-}
-
-const SubscriptionContext = createContext<SubscriptionContextType | null>(null)
+import { SubscriptionContext } from './SubscriptionContext'
 
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth()
@@ -46,10 +38,4 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       {children}
     </SubscriptionContext.Provider>
   )
-}
-
-export function useSubscription() {
-  const ctx = useContext(SubscriptionContext)
-  if (!ctx) throw new Error('useSubscription must be used inside SubscriptionProvider')
-  return ctx
 }

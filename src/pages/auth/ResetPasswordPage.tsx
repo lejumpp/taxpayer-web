@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
@@ -49,8 +49,8 @@ export default function ResetPasswordPage() {
     defaultValues: { newPassword: '', confirmPassword: '' },
   })
 
-  const { formState: { isSubmitting }, setError, watch } = form
-  const newPassword = watch('newPassword')
+  const { formState: { isSubmitting }, setError } = form
+  const newPassword = useWatch({ control: form.control, name: 'newPassword' }) ?? ''
 
   const onSubmit = async (values: ResetForm) => {
     if (!userId || !token) return

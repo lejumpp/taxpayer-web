@@ -42,7 +42,6 @@ export default function LoginPage() {
   const [isUnverified, setUnverified] = useState(false)
   const [unverifiedEmail, setUnverifiedEmail] = useState('')
   const [lockedUntil, setLockedUntil] = useState<string | null>(null)
-  const [resendTrigger, setResendTrigger] = useState(0)
   const [cooldown, setCooldown] = useState(0)
 
   const form = useForm<LoginForm>({
@@ -53,22 +52,16 @@ export default function LoginPage() {
   const { formState: { isSubmitting }, setError } = form
 
   useEffect(() => {
-    if (resendTrigger === 0) return
-    setCooldown(60)
-    const timer = setInterval(() => {
-      setCooldown(n => {
-        if (n <= 1) { clearInterval(timer); return 0 }
-        return n - 1
-      })
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [resendTrigger])
+    if (cooldown <= 0) return
+    const timer = setTimeout(() => setCooldown(cooldown - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [cooldown])
 
   const handleResend = async () => {
     try {
       await resendVerificationEmail(unverifiedEmail)
       toast.success('Verification email sent.')
-      setResendTrigger(t => t + 1)
+      setCooldown(60)
     } catch {
       toast.error('Could not resend. Try again.')
     }

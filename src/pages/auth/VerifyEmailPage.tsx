@@ -11,11 +11,14 @@ type Status = 'loading' | 'success' | 'expired' | 'not-found' | 'invalid'
 
 export default function VerifyEmailPage() {
   const [searchParams] = useSearchParams()
-  const [status, setStatus] = useState<Status>('loading')
+  const [status, setStatus] = useState<Status>(() => {
+    const userId = searchParams.get('userId')
+    const token = searchParams.get('token')
+    return !userId || !token ? 'invalid' : 'loading'
+  })
   const [resendEmail, setResendEmail] = useState(() => searchParams.get('email') ?? '')
   const [resendSent, setResendSent] = useState(false)
   const verifiedRef = useRef(false)
-  const [resendTrigger, setResendTrigger] = useState(0)
   const [cooldown, setCooldown] = useState(0)
   const [isResending, setResending] = useState(false)
 
@@ -26,10 +29,7 @@ export default function VerifyEmailPage() {
     const userId = searchParams.get('userId')
     const token = searchParams.get('token')
 
-    if (!userId || !token) {
-      setStatus('invalid')
-      return
-    }
+    if (!userId || !token) return
 
     verifyEmail(userId, decodeURIComponent(token))
       .then(() => setStatus('success'))
@@ -46,26 +46,17 @@ export default function VerifyEmailPage() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (resendTrigger === 0) return
-    setCooldown(60)
-    const timer = setInterval(() => {
-      setCooldown(n => {
-        if (n <= 1) {
-          clearInterval(timer)
-          return 0
-        }
-        return n - 1
-      })
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [resendTrigger])
+    if (cooldown <= 0) return
+    const timer = setTimeout(() => setCooldown(cooldown - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [cooldown])
 
   const handleResend = async () => {
     setResending(true)
     try {
       await resendVerificationEmail(resendEmail)
       setResendSent(true)
-      setResendTrigger(t => t + 1)
+      setCooldown(60)
     } catch {
       toast.error('Could not send. Try again.')
     } finally {

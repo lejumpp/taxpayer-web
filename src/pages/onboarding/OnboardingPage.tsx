@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useNavigate } from 'react-router-dom'
@@ -43,8 +43,8 @@ export default function OnboardingPage() {
     },
   })
 
-  const { formState: { isSubmitting }, setError, watch, setValue } = form
-  const accountType = watch('accountType')
+  const { formState: { isSubmitting }, setError, setValue } = form
+  const accountType = useWatch({ control: form.control, name: 'accountType' })
 
   const onSubmit = async (values: OnboardingForm) => {
     try {

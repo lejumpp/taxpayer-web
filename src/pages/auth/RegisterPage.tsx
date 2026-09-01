@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { Link, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { Mail, Lock, Eye, EyeOff, Loader2, CheckCircle2, Circle } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, Loader2, CheckCircle2, Circle, Ticket, FlaskConical } from 'lucide-react'
 import {
   Form,
   FormField,
@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button'
 import AccountTypeToggle from '@/components/account/AccountTypeToggle'
 import { register as registerAccount, resendVerificationEmail } from '@/services/auth'
 import { oauthErrorMessages } from '@/lib/constants'
+import { isBetaInviteEnabled } from '@/lib/config'
 
 const registerSchema = z
   .object({
@@ -32,6 +33,9 @@ const registerSchema = z
       .regex(/[^a-zA-Z0-9]/, 'Password must include at least one special character'),
     accountType: z.enum(['Individual', 'Business']),
     businessName: z.string().max(200).optional(),
+    inviteCode: isBetaInviteEnabled
+      ? z.string().min(1, 'Enter your invite code')
+      : z.string().optional(),
   })
   .refine(data => data.accountType !== 'Business' || !!data.businessName?.trim(), {
     message: 'Enter your business name',
@@ -59,6 +63,7 @@ export default function RegisterPage() {
       password: '',
       accountType: 'Individual',
       businessName: '',
+      inviteCode: '',
     },
   })
 
@@ -83,7 +88,12 @@ export default function RegisterPage() {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status
-        if (status === 409) {
+        const code = error.response?.data?.code
+        const message = error.response?.data?.error
+
+        if (code === 'INVALID_INVITE_CODE') {
+          setError('inviteCode', { message: message ?? 'Invalid invite code.' })
+        } else if (status === 409) {
           setError('email', {
             message: 'An account with that email already exists. Log in instead.',
           })
@@ -175,6 +185,15 @@ export default function RegisterPage() {
             />
           ) : (
             <div className="w-full max-w-100 space-y-7">
+              {isBetaInviteEnabled && (
+                <div className="flex items-start gap-2.5 rounded-xl border-[0.5px] border-brand-100 bg-brand-50 px-4 py-3">
+                  <FlaskConical className="size-4 text-brand-400 shrink-0 mt-0.5" />
+                  <p className="text-xs text-brand-600 leading-relaxed">
+                    TaxPayer is currently in private beta. An invite code is required to register.
+                  </p>
+                </div>
+              )}
+
               <div className="space-y-1">
                 <h2 className="text-2xl font-medium text-gray-900">Create an account</h2>
                 <p className="text-sm text-gray-600">Takes less than a minute.</p>
@@ -248,6 +267,43 @@ export default function RegisterPage() {
                       </FormItem>
                     )}
                   />
+
+                  {/* Invite code — beta only */}
+                  {isBetaInviteEnabled && (
+                    <FormField
+                      control={form.control}
+                      name="inviteCode"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                            Invite code
+                          </FormLabel>
+                          <div className="relative">
+                            <Ticket className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400 pointer-events-none" />
+                            <FormControl>
+                              <Input
+                                type="text"
+                                placeholder="Enter your invite code"
+                                className="pl-9 bg-white border-[0.5px] border-gray-100 rounded-lg h-11 uppercase tracking-widest"
+                                {...field}
+                                onChange={e => field.onChange(e.target.value.toUpperCase())}
+                              />
+                            </FormControl>
+                          </div>
+                          <FormMessage />
+                          <p className="text-xs text-gray-400">
+                            Don't have a code?{' '}
+                            <a
+                              href="mailto:hello@jumptaxja.com"
+                              className="text-brand-400 hover:text-brand-600 font-medium transition-colors"
+                            >
+                              Request beta access →
+                            </a>
+                          </p>
+                        </FormItem>
+                      )}
+                    />
+                  )}
 
                   {/* Password */}
                   <FormField
@@ -367,26 +423,34 @@ export default function RegisterPage() {
                 </form>
               </Form>
 
-              <div className="flex items-center gap-3">
-                <div className="flex-1 h-px bg-gray-100" />
-                <span className="text-xs text-gray-400">or</span>
-                <div className="flex-1 h-px bg-gray-100" />
-              </div>
+              {isBetaInviteEnabled ? (
+                <p className="text-center text-xs text-gray-400">
+                  Google sign in is disabled during beta.
+                </p>
+              ) : (
+                <>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-px bg-gray-100" />
+                    <span className="text-xs text-gray-400">or</span>
+                    <div className="flex-1 h-px bg-gray-100" />
+                  </div>
 
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full h-11 bg-white border-[0.5px] border-gray-100 text-gray-800 rounded-lg font-medium hover:bg-gray-50 gap-2"
-                onClick={handleGoogle}
-              >
-                <GoogleIcon />
-                Continue with Google
-              </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-11 bg-white border-[0.5px] border-gray-100 text-gray-800 rounded-lg font-medium hover:bg-gray-50 gap-2"
+                    onClick={handleGoogle}
+                  >
+                    <GoogleIcon />
+                    Continue with Google
+                  </Button>
 
-              {oauthError && (
-                <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-                  {oauthErrorMessages[oauthError] ?? 'Something went wrong. Please try again.'}
-                </div>
+                  {oauthError && (
+                    <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                      {oauthErrorMessages[oauthError] ?? 'Something went wrong. Please try again.'}
+                    </div>
+                  )}
+                </>
               )}
 
               <p className="text-center text-sm text-gray-600">

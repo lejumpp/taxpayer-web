@@ -77,7 +77,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl border border-[0.5px] border-cream-border p-8 w-full max-w-[420px] space-y-6">
+      <div className="bg-white rounded-2xl border-[0.5px] border-cream-border p-8 w-full max-w-105 space-y-6">
         <div className="flex items-center justify-center gap-2">
           <LogoMark />
           <span className="text-base font-semibold text-brand-400">TaxPayer</span>

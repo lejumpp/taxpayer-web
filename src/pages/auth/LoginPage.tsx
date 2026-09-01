@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
 import { login, resendVerificationEmail } from '@/services/auth'
 import { oauthErrorMessages } from '@/lib/constants'
+import { isBetaInviteEnabled } from '@/lib/config'
 
 const loginSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -269,26 +270,34 @@ export default function LoginPage() {
               </form>
             </Form>
 
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-gray-100" />
-              <span className="text-xs text-gray-400">or</span>
-              <div className="flex-1 h-px bg-gray-100" />
-            </div>
+            {isBetaInviteEnabled ? (
+              <p className="text-center text-xs text-gray-400">
+                Google sign in is disabled during beta.
+              </p>
+            ) : (
+              <>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-px bg-gray-100" />
+                  <span className="text-xs text-gray-400">or</span>
+                  <div className="flex-1 h-px bg-gray-100" />
+                </div>
 
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full h-11 bg-white border-[0.5px] border-gray-100 text-gray-800 rounded-lg font-medium hover:bg-gray-50 gap-2"
-              onClick={handleGoogle}
-            >
-              <GoogleIcon />
-              Continue with Google
-            </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full h-11 bg-white border-[0.5px] border-gray-100 text-gray-800 rounded-lg font-medium hover:bg-gray-50 gap-2"
+                  onClick={handleGoogle}
+                >
+                  <GoogleIcon />
+                  Continue with Google
+                </Button>
 
-            {oauthError && (
-              <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-                {oauthErrorMessages[oauthError] ?? 'Something went wrong. Please try again.'}
-              </div>
+                {oauthError && (
+                  <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                    {oauthErrorMessages[oauthError] ?? 'Something went wrong. Please try again.'}
+                  </div>
+                )}
+              </>
             )}
 
             <p className="text-center text-sm text-gray-600">

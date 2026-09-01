@@ -291,15 +291,6 @@ export default function RegisterPage() {
                             </FormControl>
                           </div>
                           <FormMessage />
-                          <p className="text-xs text-gray-400">
-                            Don't have a code?{' '}
-                            <a
-                              href="mailto:hello@jumptaxja.com"
-                              className="text-brand-400 hover:text-brand-600 font-medium transition-colors"
-                            >
-                              Request beta access →
-                            </a>
-                          </p>
                         </FormItem>
                       )}
                     />

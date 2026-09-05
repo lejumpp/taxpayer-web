@@ -16,6 +16,7 @@ import {
   HandCoins,
   CircleCheck,
   Loader2,
+  ArrowRight,
   type LucideIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -23,7 +24,7 @@ import { getPlans, createCheckout } from '@/services/payments';
 import { useSubscription } from '@/context/SubscriptionContext';
 import { useAuth } from '@/context/AuthContext';
 import { formatJMD, formatJMDWhole } from '@/lib/currency';
-import { PlanInterval, type PlanIntervalValue } from '@/lib/constants';
+import { PlanInterval, SLOGANS, type PlanIntervalValue } from '@/lib/constants';
 
 type PanelState = 'value' | 'checkout' | 'success'
 
@@ -94,7 +95,7 @@ function Topbar({ onBack }: { onBack: () => void }) {
         <div className="w-7.5 h-7.5 bg-brand-400 rounded-lg flex items-center justify-center">
           <Receipt size={15} className="text-white" aria-hidden="true" />
         </div>
-        <span className="text-sm font-medium text-gray-900">TaxPayer</span>
+        <span className="text-sm font-medium text-gray-900">JumpTax</span>
       </div>
       <button
         onClick={onBack}
@@ -130,11 +131,11 @@ function LeftPanel({
       >
         <div className="hidden md:inline-flex items-center gap-1.5 bg-white/15 rounded-full px-3 py-1.5 mb-8 w-fit">
           <Star size={13} className="text-white" aria-hidden="true" />
-          <span className="text-xs font-medium text-white">TaxPayer Pro</span>
+          <span className="text-xs font-medium text-white">JumpTax Pro</span>
         </div>
 
         <h1 className="text-2xl md:text-4xl font-semibold text-white leading-tight tracking-tight mb-2 md:mb-4">
-          Skip the accountant. Not the accuracy.
+          {SLOGANS.skipAccountant}
         </h1>
 
         <p className="text-sm text-white/65 leading-relaxed mb-0 md:mb-12 md:max-w-md">
@@ -448,7 +449,7 @@ export default function UpgradePage() {
               panelState === 'checkout' ||
               (panelState === 'value' && (!activePlan || isLoading || isStartingCheckout))
             }
-            className={`w-full py-3.5 rounded-xl text-sm font-medium border-none cursor-pointer transition-colors disabled:opacity-50 mb-2.5 ${
+            className={`w-full inline-flex items-center justify-center gap-1.5 py-3.5 rounded-xl text-sm font-medium border-none cursor-pointer transition-colors disabled:opacity-50 mb-2.5 ${
               panelState === 'success'
                 ? 'bg-success-400 hover:bg-success-600 text-white'
                 : panelState === 'checkout'
@@ -457,7 +458,7 @@ export default function UpgradePage() {
             }`}
           >
             {panelState === 'success'
-              ? 'Go to dashboard →'
+              ? <>Go to dashboard <ArrowRight size={16} aria-hidden="true" /></>
               : panelState === 'checkout'
               ? 'Completing order...'
               : isLoading

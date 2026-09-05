@@ -1,6 +1,6 @@
 {
-  "name": "TaxPayer",
-  "short_name": "TaxPayer",
+  "name": "JumpTax",
+  "short_name": "JumpTax",
   "description": "Track income and expenses for your Jamaican tax return",
   "start_url": "/",
   "display": "standalone",

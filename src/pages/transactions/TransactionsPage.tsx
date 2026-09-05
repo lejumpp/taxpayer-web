@@ -20,6 +20,7 @@ import {
   Calendar as CalendarIcon,
   FileSpreadsheet,
   X,
+  ArrowRight,
 } from 'lucide-react'
 
 import PageHeader from '@/components/layout/PageHeader'
@@ -478,7 +479,7 @@ export default function TransactionsPage() {
               placeholder="Start date"
               ariaLabel="Start date"
             />
-            <span className="text-sm text-gray-200">→</span>
+            <ArrowRight size={14} className="text-gray-200 shrink-0" aria-hidden="true" />
             <DateFilterButton
               value={filters.toDate}
               onChange={value => updateFilter('toDate', value)}

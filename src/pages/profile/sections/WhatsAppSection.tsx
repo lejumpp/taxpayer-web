@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import axios from 'axios'
-import { MessageCircle, Camera, Check, Send } from 'lucide-react'
+import { MessageCircle, Camera, Check, Send, ArrowLeft } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import Skeleton from '@/components/ui/Skeleton'
@@ -59,7 +59,7 @@ function UnlinkedState({
         <div>
           <p className="text-sm font-medium text-info-800 mb-1">Log transactions via WhatsApp</p>
           <p className="text-[13px] text-info-600 leading-relaxed">
-            Send a message or photo of a receipt to your TaxPayer WhatsApp number. We'll parse it and add it to
+            Send a message or photo of a receipt to your JumpTax WhatsApp number. We'll parse it and add it to
             your ledger automatically — no app needed.
           </p>
         </div>
@@ -172,9 +172,9 @@ function PendingState({
       <button
         type="button"
         onClick={onBack}
-        className="text-xs text-gray-400 bg-transparent border-none cursor-pointer text-left w-fit"
+        className="inline-flex items-center gap-1 text-xs text-gray-400 bg-transparent border-none cursor-pointer text-left w-fit"
       >
-        ← Use a different number
+        <ArrowLeft size={13} aria-hidden="true" /> Use a different number
       </button>
 
       <p className="text-xs text-gray-400">
@@ -316,7 +316,7 @@ export default function WhatsAppSection() {
           </div>
           <p className="text-base font-medium text-gray-900 mb-2">WhatsApp integration</p>
           <p className="text-sm text-gray-400 mb-6 max-w-[320px] leading-relaxed">
-            Log transactions by sending a message or receipt photo to your TaxPayer WhatsApp number. Available on
+            Log transactions by sending a message or receipt photo to your JumpTax WhatsApp number. Available on
             Pro.
           </p>
           <button
@@ -374,7 +374,7 @@ export default function WhatsAppSection() {
 
       {/* Unlink confirmation modal */}
       <Dialog open={unlinkModalOpen} onOpenChange={setUnlinkModalOpen}>
-        <DialogContent className="max-w-[380px] rounded-2xl p-6">
+        <DialogContent className="max-w-95 rounded-2xl p-6">
           <DialogHeader className="items-start">
             <DialogTitle className="text-base font-medium text-gray-900">Unlink WhatsApp?</DialogTitle>
             <p className="text-sm text-gray-400 leading-relaxed">

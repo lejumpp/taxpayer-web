@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import Skeleton from '@/components/ui/Skeleton'
 import UserAvatar from '@/components/ui/UserAvatar'
 import FormSection from '@/components/ui/FormSection'
+import { ArrowRight } from 'lucide-react'
 import AccountTypeToggle from '@/components/account/AccountTypeToggle'
 import WhatsAppStatusRow from '@/components/profile/WhatsAppStatusRow'
 import { useAuth } from '@/context/AuthContext'
@@ -322,9 +323,9 @@ export default function ProfileSection() {
                     <button
                       type="button"
                       onClick={focusTrn}
-                      className="text-xs text-brand-400 font-medium bg-transparent border-none cursor-pointer whitespace-nowrap"
+                      className="inline-flex items-center gap-1 text-xs text-brand-400 font-medium bg-transparent border-none cursor-pointer whitespace-nowrap"
                     >
-                      Add now →
+                      Add now <ArrowRight size={13} aria-hidden="true" />
                     </button>
                   </div>
                 )}
@@ -337,7 +338,7 @@ export default function ProfileSection() {
               <FormSection bordered={false}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Log out of TaxPayer</p>
+                    <p className="text-sm font-medium text-gray-900">Log out of JumpTax</p>
                     <p className="text-xs text-gray-400 mt-0.5">You'll need to log back in to access your account.</p>
                   </div>
                   <button

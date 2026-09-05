@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, Loader2, CircleCheck } from 'lucide-react'
 import {
   Form,
   FormField,
@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
 import { login, resendVerificationEmail } from '@/services/auth'
-import { oauthErrorMessages } from '@/lib/constants'
+import { oauthErrorMessages, SLOGANS } from '@/lib/constants'
 import { isBetaInviteEnabled } from '@/lib/config'
 
 const loginSchema = z.object({
@@ -39,6 +39,7 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const oauthError = searchParams.get('error')
+  const reason = searchParams.get('reason')
   const [showPassword, setShowPassword] = useState(false)
   const [isUnverified, setUnverified] = useState(false)
   const [unverifiedEmail, setUnverifiedEmail] = useState('')
@@ -106,7 +107,7 @@ export default function LoginPage() {
       <div className="hidden md:flex md:w-1/2 flex-col justify-between p-10 bg-brand-400 text-white">
         <div className="flex items-center gap-2.5">
           <LogoMark />
-          <span className="text-lg font-semibold tracking-tight">TaxPayer</span>
+          <span className="text-lg font-semibold tracking-tight">JumpTax</span>
         </div>
 
         <div className="space-y-8">
@@ -116,7 +117,7 @@ export default function LoginPage() {
 
           <div className="space-y-3">
             <h1 className="text-4xl font-bold leading-tight tracking-tight">
-              Your taxes,<br />sorted.
+              {SLOGANS.oneJumpAhead}
             </h1>
             <p className="text-white/70 text-base leading-relaxed">
               No accountant needed.<br />No jargon. No guesswork.
@@ -150,15 +151,24 @@ export default function LoginPage() {
         {/* Mobile header */}
         <div className="flex items-center gap-2 px-6 pt-6 md:hidden">
           <LogoMark size="sm" />
-          <span className="text-base font-semibold text-brand-400">TaxPayer</span>
+          <span className="text-base font-semibold text-brand-400">JumpTax</span>
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
           <div className="w-full max-w-100 space-y-7">
             <div className="space-y-1">
               <h2 className="text-2xl font-medium text-gray-900">Welcome back</h2>
-              <p className="text-sm text-gray-600">Log in to your TaxPayer account.</p>
+              <p className="text-sm text-gray-600">Log in to your JumpTax account.</p>
             </div>
+
+            {reason === 'password_changed' && (
+              <div className="flex items-center gap-2 px-4 py-3 bg-success-50 border border-success-100 rounded-xl">
+                <CircleCheck size={15} className="text-success-400 shrink-0" aria-hidden="true" />
+                <p className="text-sm text-success-600">
+                  Password updated successfully. Please log in with your new password.
+                </p>
+              </div>
+            )}
 
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>

@@ -72,7 +72,7 @@ export default function OnboardingPage() {
       <div className="w-full max-w-115 rounded-2xl border-[0.5px] border-cream-border bg-white p-8 space-y-6">
         <div className="flex items-center gap-2">
           <LogoMark />
-          <span className="text-base font-semibold text-brand-400">TaxPayer</span>
+          <span className="text-base font-semibold text-brand-400">JumpTax</span>
         </div>
 
         <div className="space-y-1">
@@ -93,7 +93,6 @@ export default function OnboardingPage() {
                       setValue('accountType', type)
                       if (type === 'Individual') setValue('businessName', '')
                     }}
-                    labels={{ Individual: '👤 Individual', Business: '🏢 Business' }}
                   />
                   <FormMessage />
                 </FormItem>

@@ -94,7 +94,7 @@ function Topbar({ onBack }: { onBack: () => void }) {
         <div className="w-7.5 h-7.5 bg-brand-400 rounded-lg flex items-center justify-center">
           <Receipt size={15} className="text-white" aria-hidden="true" />
         </div>
-        <span className="text-sm font-medium text-gray-900">TaxPayer</span>
+        <span className="text-sm font-medium text-gray-900">JumpTax</span>
       </div>
       <button
         onClick={onBack}
@@ -130,7 +130,7 @@ function LeftPanel({
       >
         <div className="hidden md:inline-flex items-center gap-1.5 bg-white/15 rounded-full px-3 py-1.5 mb-8 w-fit">
           <Star size={13} className="text-white" aria-hidden="true" />
-          <span className="text-xs font-medium text-white">TaxPayer Pro</span>
+          <span className="text-xs font-medium text-white">JumpTax Pro</span>
         </div>
 
         <h1 className="text-2xl md:text-4xl font-semibold text-white leading-tight tracking-tight mb-2 md:mb-4">

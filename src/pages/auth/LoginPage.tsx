@@ -106,7 +106,7 @@ export default function LoginPage() {
       <div className="hidden md:flex md:w-1/2 flex-col justify-between p-10 bg-brand-400 text-white">
         <div className="flex items-center gap-2.5">
           <LogoMark />
-          <span className="text-lg font-semibold tracking-tight">TaxPayer</span>
+          <span className="text-lg font-semibold tracking-tight">JumpTax</span>
         </div>
 
         <div className="space-y-8">
@@ -150,14 +150,14 @@ export default function LoginPage() {
         {/* Mobile header */}
         <div className="flex items-center gap-2 px-6 pt-6 md:hidden">
           <LogoMark size="sm" />
-          <span className="text-base font-semibold text-brand-400">TaxPayer</span>
+          <span className="text-base font-semibold text-brand-400">JumpTax</span>
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
           <div className="w-full max-w-100 space-y-7">
             <div className="space-y-1">
               <h2 className="text-2xl font-medium text-gray-900">Welcome back</h2>
-              <p className="text-sm text-gray-600">Log in to your TaxPayer account.</p>
+              <p className="text-sm text-gray-600">Log in to your JumpTax account.</p>
             </div>
 
             <Form {...form}>

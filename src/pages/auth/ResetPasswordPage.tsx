@@ -80,7 +80,7 @@ export default function ResetPasswordPage() {
       <div className="bg-white rounded-2xl border-[0.5px] border-cream-border p-8 w-full max-w-105 space-y-6">
         <div className="flex items-center justify-center gap-2">
           <LogoMark />
-          <span className="text-base font-semibold text-brand-400">TaxPayer</span>
+          <span className="text-base font-semibold text-brand-400">JumpTax</span>
         </div>
 
         {/* Missing params */}

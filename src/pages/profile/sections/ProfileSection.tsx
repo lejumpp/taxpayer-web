@@ -337,7 +337,7 @@ export default function ProfileSection() {
               <FormSection bordered={false}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Log out of TaxPayer</p>
+                    <p className="text-sm font-medium text-gray-900">Log out of JumpTax</p>
                     <p className="text-xs text-gray-400 mt-0.5">You'll need to log back in to access your account.</p>
                   </div>
                   <button

@@ -33,7 +33,7 @@ export default function AppShell() {
         {/* Logo — must be exactly 60px to align with header */}
         <div className="h-15 flex items-center px-5 border-b border-[#E8D9C0] shrink-0">
           <LogoMark />
-          <span className="ml-2.5 text-base font-semibold text-[#2C2C2A]">TaxPayer</span>
+          <span className="ml-2.5 text-base font-semibold text-gray-900">JumpTax</span>
         </div>
 
         {/* Nav items */}
@@ -102,7 +102,7 @@ export default function AppShell() {
           <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-[10px] bg-gray-25">
             <UserAvatar firstName={user?.firstName ?? ''} lastName={user?.lastName ?? ''} className="w-8.5 h-8.5 text-xs" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-[#2C2C2A] truncate">
+              <p className="text-xs font-medium text-gray-900 truncate">
                 {user?.firstName} {user?.lastName}
               </p>
               <p className="text-xs text-[#888780]">{accountTypeLabel}</p>

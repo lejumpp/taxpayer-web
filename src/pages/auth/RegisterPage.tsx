@@ -126,7 +126,7 @@ export default function RegisterPage() {
       <div className="hidden md:flex md:w-1/2 flex-col justify-between p-10 bg-brand-400 text-white">
         <div className="flex items-center gap-2.5">
           <LogoMark />
-          <span className="text-lg font-semibold tracking-tight">TaxPayer</span>
+          <span className="text-lg font-semibold tracking-tight">JumpTax</span>
         </div>
 
         <div className="space-y-8">
@@ -172,7 +172,7 @@ export default function RegisterPage() {
         {/* Mobile header */}
         <div className="flex items-center gap-2 px-6 pt-6 md:hidden">
           <LogoMark size="sm" />
-          <span className="text-base font-semibold text-brand-400">TaxPayer</span>
+          <span className="text-base font-semibold text-brand-400">JumpTax</span>
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
@@ -189,7 +189,7 @@ export default function RegisterPage() {
                 <div className="flex items-start gap-2.5 rounded-xl border-[0.5px] border-brand-100 bg-brand-50 px-4 py-3">
                   <FlaskConical className="size-4 text-brand-400 shrink-0 mt-0.5" />
                   <p className="text-xs text-brand-600 leading-relaxed">
-                    TaxPayer is currently in private beta. An invite code is required to register.
+                    JumpTax is currently in private beta. An invite code is required to register.
                   </p>
                 </div>
               )}

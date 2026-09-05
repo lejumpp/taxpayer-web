@@ -59,7 +59,7 @@ function UnlinkedState({
         <div>
           <p className="text-sm font-medium text-info-800 mb-1">Log transactions via WhatsApp</p>
           <p className="text-[13px] text-info-600 leading-relaxed">
-            Send a message or photo of a receipt to your TaxPayer WhatsApp number. We'll parse it and add it to
+            Send a message or photo of a receipt to your JumpTax WhatsApp number. We'll parse it and add it to
             your ledger automatically — no app needed.
           </p>
         </div>
@@ -316,7 +316,7 @@ export default function WhatsAppSection() {
           </div>
           <p className="text-base font-medium text-gray-900 mb-2">WhatsApp integration</p>
           <p className="text-sm text-gray-400 mb-6 max-w-[320px] leading-relaxed">
-            Log transactions by sending a message or receipt photo to your TaxPayer WhatsApp number. Available on
+            Log transactions by sending a message or receipt photo to your JumpTax WhatsApp number. Available on
             Pro.
           </p>
           <button

@@ -10,6 +10,15 @@ export const AccountTypeLabel: Record<AccountTypeValue, string> = {
   [AccountType.Business]: 'Business',
 }
 
+export const SLOGANS = {
+  /** Register / filing flows */
+  filing: 'Jump into filing. Land on done.',
+  /** Login / general brand hero */
+  oneJumpAhead: 'Your taxes, one jump ahead.',
+  /** Upgrade / paid value prop */
+  skipAccountant: 'Skip the accountant. Not the accuracy.',
+} as const
+
 export const PlanInterval = {
   Monthly: 'Monthly',
   Annual: 'Annual',

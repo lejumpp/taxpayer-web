@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import AccountTypeToggle from '@/components/account/AccountTypeToggle'
 import { register as registerAccount, resendVerificationEmail } from '@/services/auth'
-import { oauthErrorMessages } from '@/lib/constants'
+import { oauthErrorMessages, SLOGANS } from '@/lib/constants'
 import { isBetaInviteEnabled } from '@/lib/config'
 
 const registerSchema = z
@@ -132,7 +132,7 @@ export default function RegisterPage() {
         <div className="space-y-8">
           <div className="space-y-3">
             <h1 className="text-4xl font-bold leading-tight tracking-tight">
-              File with<br />confidence.
+              {SLOGANS.filing}
             </h1>
             <p className="text-white/70 text-base leading-relaxed">
               Track income and expenses year-round.<br />

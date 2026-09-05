@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import Skeleton from '@/components/ui/Skeleton'
 import UserAvatar from '@/components/ui/UserAvatar'
 import FormSection from '@/components/ui/FormSection'
+import { ArrowRight } from 'lucide-react'
 import AccountTypeToggle from '@/components/account/AccountTypeToggle'
 import WhatsAppStatusRow from '@/components/profile/WhatsAppStatusRow'
 import { useAuth } from '@/context/AuthContext'
@@ -322,9 +323,9 @@ export default function ProfileSection() {
                     <button
                       type="button"
                       onClick={focusTrn}
-                      className="text-xs text-brand-400 font-medium bg-transparent border-none cursor-pointer whitespace-nowrap"
+                      className="inline-flex items-center gap-1 text-xs text-brand-400 font-medium bg-transparent border-none cursor-pointer whitespace-nowrap"
                     >
-                      Add now →
+                      Add now <ArrowRight size={13} aria-hidden="true" />
                     </button>
                   </div>
                 )}

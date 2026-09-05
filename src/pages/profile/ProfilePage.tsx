@@ -3,6 +3,7 @@ import PageHeader from '../../components/layout/PageHeader'
 import ProfileSection from './sections/ProfileSection'
 import BillingSection from './sections/BillingSection'
 import WhatsAppSection from './sections/WhatsAppSection'
+import SecuritySection from './sections/SecuritySection'
 
 type SettingsSection = 'profile' | 'security' | 'whatsapp' | 'billing'
 
@@ -14,7 +15,7 @@ const navSections: Array<{
     label: 'Account',
     items: [
       { label: 'My profile', icon: 'ti-user-circle', section: 'profile', enabled: true },
-      { label: 'Security', icon: 'ti-lock', section: 'security', enabled: false },
+      { label: 'Security', icon: 'ti-lock', section: 'security', enabled: true },
     ],
   },
   {
@@ -109,6 +110,7 @@ export default function ProfilePage() {
               <ProfileSection />
             </div>
           )}
+          {activeSection === 'security' && <SecuritySection />}
           {activeSection === 'whatsapp' && <WhatsAppSection />}
           {activeSection === 'billing' && <BillingSection />}
         </div>

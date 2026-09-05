@@ -93,7 +93,6 @@ export default function OnboardingPage() {
                       setValue('accountType', type)
                       if (type === 'Individual') setValue('businessName', '')
                     }}
-                    labels={{ Individual: '👤 Individual', Business: '🏢 Business' }}
                   />
                   <FormMessage />
                 </FormItem>
